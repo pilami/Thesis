@@ -1,12 +1,6 @@
 
 \documentclass[MTech]{iitmdiss}
 
-
-
-
-
-
-
 %\usepackage{pifont}
 \usepackage{times}
 \usepackage{setspace}
@@ -279,7 +273,7 @@ Few other variants of RRTs in dynamic environments are discussed in the next cha
  
 \chapter{Planning in Dynamic Environment} 
 
-Traditionally one way to look at Dynamic environment was to include the time also in the state space. So instead of simply planning in configuration \emph{C} space now planning is done in Configuration-Time \emph{C-T} space as introduced by Fraichard (  Fraichard. Trajectory planning in a dynamic workspace: a ‘state-time’ approach. Advanced Robotics, 13(1):75–94, 1999.). They address the problem of moving obstacles and dynamical constraints of the workspace in the robot in a unified way by solving in the state-time space. They model the problem with dynamical constraints as canonical trajectories which are trajectories with discrete and piecewise linear accelerations. We use the same formulation in our experiments later on. They use canonical trajectories in finding a shortest path in the state-time space. 
+Traditionally one way to look at Dynamic environment was to include the time also in the state space. So instead of simply planning in configuration \emph{C} space now planning is done in Configuration-Time \emph{C-T} space as introduced by Fraichard (  Fraichard. Trajectory planning in a dynamic workspace: a ‘state-time’ approach. Advanced Robotics, 13(1):75–94, 1999.). They address the problem of moving obstacles and dynamical constraints of the workspace in the robot in a unified way by solving in the state-time space. They model the problem with dynamical constraints as canonical trajectories which are trajectories with discrete and piecewise linear accelerations. We use the same formulation in our experiments later on. They use canonical trajectories in finding a shortest path in the state-time space.  In (J. van den Berg and M. Overmars. Roadmap-based motion planning in dynamic environments. IEEE Transactions on Robotics, 21(5):885–897, 2005  ) they use a two level planner to find safe trajectories in dynamic environment consisting of both static and dynamic domains. They use the roadmap constructed initially considering only the static obstacles and use two level search when querying a path from start to goal configurations. The local planner finds trajectories using depth first search on a state-time grid and and the global planner uses the local trajectories generated and and performs $A*$ search on them to find a path to goal configuration.
 
 Svenstrup et al.(Trajectory Planning for Robots in Dynamic Human Environments) implemented a trajectory planning algorithm using RRTs dynamic human environments by modelling as \emph{C-T} space with Model Predictive Control, where only a small part of the trajectory is executed when the new point is being calculated in the rrt iteration. They modelled dynamic human environment as a potential field with humans as obstacles emitting repulsive field and finding a mininum cost path according to the cost of traversing in the potential field. They have encoded the dynamic nature of the environment using the dynamic potential field equation which is 
 $$G(t) = g_1(x(t)) + g_2(x(t), \emph{P}(t) )+ g_3(x(t)) $$
@@ -295,22 +289,19 @@ on Robotics and Automation, 11(3):343–351, 1995.
  
 \section{Predicting obstacles} 
 
-Modelling the path of the obstacle in the environment can be classified into three categories. First is the worst case situation where the obstacle is trying to actively collide with the agent.
- 2 level planner. global ignoring the dynamic obstacles and local taking care of them. 
-J. van den Berg and M. Overmars. Roadmap-based motion planning in dynamic environments. IEEE Transactions on Robotics, 21(5):885–897, 2005  
- 
-D. Hsu, R. Kindel, J. Latombe, and S. Rock. Randomized kinodynamic motion plan- ning with moving obstacles. International Journal of Robotics Research, 21(3):233–255, 2002.
- 
- 
- 
+Modelling the path of the obstacle in the environment can be classified into three categories. First is the worst case situation where the obstacle is trying to actively collide with the agent. Aoude et al (Aoude GS, Luders BD, How JP (2010a) Sampling-based threat assessment algorithms for intersection collisions involving errant drivers. In: IFAC Symposium on Intel- ligent Autonomous Vehicles, Lecce, Italy) proposed an algorithm which models the whole problem from the game theoretic standpoint as a pursuit evasion game where obstacle is the pursuer and agent is the evader. It uses RRTs to simulate possible trajectories of pursuer and there by finding out reachability set in a given time frame. They have included timestamp in the state representation to keep track of time with respect to trajectories. The resulting algorithm , RRT-Reach is a two-phase exploration-pursuit modification to vanilla RRT. Another way of modelling the obstacles are by looking at their current dynamics and predicting their future trajectories assuming them to follow a fixed mode of operation i.e by propogating its dynamics forward. The predicion can be done using a Kalman filter or any continuous bayes filters. It works well for short term prediction but when the obstacles are not periodic or not following a certiain fixed path then they do not predict the obstacles properly to be used by any path planning algorithm. Another way of modelling dynamic obstacles is by assuming them to follow different patterns in different parts of the state space. And we use previous trajectories across the state space to predict those patterns. Using discrete state space predicting techniques a motion model is developed where the object transitions from one state to other state with some transition probability which they attempt to learn. In clustering based techniques, previous trajectories are clubbed together into representative clusters and a new partial path is identified against its suitable representative cluster which would give the prediction on the future path of the obstacle. Due to the discretizations we need to perform to implement discrete state space techniques they may suffer from overfitting if the resolution is set too high unlike the clustering based techniques. Fulgenzii et al (Fulgenzi C, Tay C, Spalanzani A, Laugier C (2008) Probabilistic navigation in dynamic environment using rapidly-exploring random trees and gaussian processes. In: IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS), Nice, France, pp 1056–1062) uses Guassian Processes to model the dynamic obstacles in a RRT based path planner. Aoude et al (Probabilistically Safe Motion Planning to Avoid Dynamic Obstacles with Uncertain Motion Patterns
+Georges S. Aoude · Brandon D. Luders · Joshua M. Joseph · Nicholas Roy · Jonathan P. How) proposed a method that uses Chance constraint RRTs to calculate the reachability set and Guassian Process regression to predict the future states of the obstacles. However with increasing number of obstacles and complex paths it becomes more difficult to keep track of all the obstacle trajectories. 
+
+In non-stationary and partially known environment where we do not have obstacle models, instead of predicting the path of obstacles efficient replanning can be done using RRTs. We look at some of the approaches ot do that in the next section.
+
  \section{Replanning}
  
+
+
  
 D. Ferguson, N. Kalra, and A. Stentz, “Replanning with rrts,” in Proc. IEEE International Conference on Robotics and Automation ICRA 2006, 2006, pp. 1243–1248.
 
-
  M. Zucker, J. Kuffner, and M. Branicky, “Multipartite rrts for rapid replanning in dynamic environments,” in Proc. IEEE International Conference on Robotics and Automation, 2007, pp. 1603–1609. 
- 
  
 P. Leven and S. Hutchinson. Real-time motion planning in changing environments. In Proc. International Sym- posium on Robotics Research, 2000. 
  

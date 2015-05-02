@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.6.30)  2 MAY 2015 12:00
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.6.30)  2 MAY 2015 13:40
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -469,21 +469,21 @@ LaTeX Warning: Label `fig:rrt-bias' multiply defined.
 )
 \openout1 = `mythesis.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Try loading font information for OT1+ptm on input line 59.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 53.
+LaTeX Font Info:    ... okay on input line 53.
+LaTeX Font Info:    Try loading font information for OT1+ptm on input line 53.
  (/usr/local/texlive/2012/texmf-dist/tex/latex/psnfss/ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
@@ -562,7 +562,7 @@ Package: fr-subfig 2007/12/24 v0.1g (beta) floatrow: additions for subfig
 \FBso@max=\skip78
 )
 \AtBeginShipoutBox=\box32
-Package hyperref Info: Link coloring ON on input line 59.
+Package hyperref Info: Link coloring ON on input line 53.
 
 (/usr/local/texlive/2012/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2010/04/30 v2.40 Cross-referencing by name of section
@@ -572,25 +572,25 @@ Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
 \c@section@level=\count157
 )
-LaTeX Info: Redefining \ref on input line 59.
-LaTeX Info: Redefining \pageref on input line 59.
-LaTeX Info: Redefining \nameref on input line 59.
+LaTeX Info: Redefining \ref on input line 53.
+LaTeX Info: Redefining \pageref on input line 53.
+LaTeX Info: Redefining \nameref on input line 53.
 
 (./mythesis.out) (./mythesis.out)
 \@outlinefile=\write3
 \openout3 = `mythesis.out'.
 
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <14.4> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 74.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 68.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10.95> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 74.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 68.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 74.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 68.
  <iitm.pdf, id=96, 333.245pt x 333.245pt>
 File: iitm.pdf Graphic file (type pdf)
 
 <use iitm.pdf>
-Package pdftex.def Info: iitm.pdf used on input line 74.
+Package pdftex.def Info: iitm.pdf used on input line 68.
 (pdftex.def)             Requested size: 99.97426pt x 99.97426pt.
  [0
 
@@ -598,7 +598,7 @@ Package pdftex.def Info: iitm.pdf used on input line 74.
 pdf>]
 Certificate
 
-Underfull \hbox (badness 10000) in paragraph at lines 93--98
+Underfull \hbox (badness 10000) in paragraph at lines 87--92
 
  []
 
@@ -606,8 +606,8 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.}) has b
 een already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.104 \acknowledgements
-                        [0
+l.98 \acknowledgements
+                       [0
 
 ] [1
 
@@ -654,13 +654,13 @@ Missing character: There is no ™ in font ptmr7t!
 
 ] [2]
 CHAPTER 2.
-LaTeX Font Info:    Try loading font information for OMS+ptm on input line 167.
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 161.
 
 (/usr/local/texlive/2012/texmf-dist/tex/latex/psnfss/omsptm.fd
 File: omsptm.fd 
 )
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <10.95> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 167.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 161.
  [3
 
 ] [4]
@@ -669,7 +669,7 @@ CHAPTER 3.
 <rrt.png, id=206, 433.62pt x 375.4025pt>
 File: rrt.png Graphic file (type png)
  <use rrt.png>
-Package pdftex.def Info: rrt.png used on input line 207.
+Package pdftex.def Info: rrt.png used on input line 201.
 (pdftex.def)             Requested size: 433.61894pt x 375.40158pt.
  [8
 
@@ -677,19 +677,19 @@ Package pdftex.def Info: rrt.png used on input line 207.
 <rrtnobias.pdf, id=231, 2208.25pt x 1003.75pt>
 File: rrtnobias.pdf Graphic file (type pdf)
  <use rrtnobias.pdf>
-Package pdftex.def Info: rrtnobias.pdf used on input line 256.
+Package pdftex.def Info: rrtnobias.pdf used on input line 250.
 (pdftex.def)             Requested size: 2208.24463pt x 1003.74756pt.
 
 <rrtbias01.pdf, id=233, 2208.25pt x 1003.75pt>
 File: rrtbias01.pdf Graphic file (type pdf)
  <use rrtbias01.pdf>
-Package pdftex.def Info: rrtbias01.pdf used on input line 257.
+Package pdftex.def Info: rrtbias01.pdf used on input line 251.
 (pdftex.def)             Requested size: 2208.24463pt x 1003.74756pt.
 
 <rrtbias02.pdf, id=235, 2208.25pt x 1003.75pt>
 File: rrtbias02.pdf Graphic file (type pdf)
  <use rrtbias02.pdf>
-Package pdftex.def Info: rrtbias02.pdf used on input line 258.
+Package pdftex.def Info: rrtbias02.pdf used on input line 252.
 (pdftex.def)             Requested size: 2208.24463pt x 1003.74756pt.
 Missing character: There is no â in font cmr10!
 Missing character: There is no € in font cmr10!
@@ -725,7 +725,7 @@ Missing character: There is no â in font cmr10!
 Missing character: There is no € in font cmr10!
 Missing character: There is no “ in font cmr10!
 
-Overfull \hbox (675.86304pt too wide) in paragraph at lines 266--268
+Overfull \hbox (675.86304pt too wide) in paragraph at lines 260--262
 []\OT1/ptm/m/n/10.95 Brooks et al $\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 A:Br
 ooks; T:Kaupp; andA:Makarenko; Randomisedmpc \OMS/cmsy/m/n/10.95 ^^@ \OML/cmm/m
 /it/10.95 basedmotion \OMS/cmsy/m/n/10.95 ^^@ \OML/cmm/m/it/10.95 planningformo
@@ -736,7 +736,7 @@ alConferenceon; May\OT1/cmr/m/n/10.95 2009\OML/cmm/m/it/10.95 ; pp:\OT1/cmr/m/n
  []
 
 
-Overfull \hbox (278.12415pt too wide) in paragraph at lines 266--268
+Overfull \hbox (278.12415pt too wide) in paragraph at lines 260--262
 \OML/cmm/m/it/10.95 plingforplanningunderdifferentialconstraints; inRoboticsand
 Automation; \OT1/cmr/m/n/10.95 2009\OML/cmm/m/it/10.95 :ICRA\OT1/cmr/m/n/10.95 
 09\OML/cmm/m/it/10.95 :IEEEInternationalConferenceon; May\OT1/cmr/m/n/10.95 200
@@ -745,7 +745,7 @@ cmr/m/n/10.95 )$
  []
 
 
-Overfull \hbox (113.5227pt too wide) in paragraph at lines 266--268
+Overfull \hbox (113.5227pt too wide) in paragraph at lines 260--262
 \OML/cmm/m/it/10.95 dimensionalsearchspaces; inProc:IEEEInternationalConference
 onRoboticsandAutomation; \OT1/cmr/m/n/10.95 2007\OML/cmm/m/it/10.95 ; pp:\OT1/c
 mr/m/n/10.95 13101315\OML/cmm/m/it/10.95 :\OT1/cmr/m/n/10.95 )$\OT1/ptm/m/n/10.
@@ -763,49 +763,42 @@ Missing character: There is no ™ in font ptmr7t!
 Missing character: There is no â in font ptmr7t!
 Missing character: There is no € in font ptmr7t!
 Missing character: There is no “ in font ptmr7t!
+Missing character: There is no â in font ptmr7t!
+Missing character: There is no € in font ptmr7t!
+Missing character: There is no “ in font ptmr7t!
 [14
 
 ]
 Missing character: There is no â in font ptmr7t!
 Missing character: There is no € in font ptmr7t!
-Missing character: There is no ˜ in font ptmr7t!
-Missing character: There is no â in font ptmr7t!
-Missing character: There is no € in font ptmr7t!
-Missing character: There is no ™ in font ptmr7t!
-Missing character: There is no â in font ptmr7t!
-Missing character: There is no € in font ptmr7t!
 Missing character: There is no “ in font ptmr7t!
 Missing character: There is no â in font ptmr7t!
 Missing character: There is no € in font ptmr7t!
 Missing character: There is no “ in font ptmr7t!
-Missing character: There is no â in font ptmr7t!
-Missing character: There is no € in font ptmr7t!
-Missing character: There is no “ in font ptmr7t!
-Missing character: There is no â in font ptmr7t!
-Missing character: There is no € in font ptmr7t!
-Missing character: There is no “ in font ptmr7t!
-Missing character: There is no â in font ptmr7t!
-Missing character: There is no € in font ptmr7t!
-Missing character: There is no œ in font ptmr7t!
-Missing character: There is no â in font ptmr7t!
-Missing character: There is no € in font ptmr7t!
-Missing character: There is no  in font ptmr7t!
-Missing character: There is no â in font ptmr7t!
-Missing character: There is no € in font ptmr7t!
-Missing character: There is no “ in font ptmr7t!
-Missing character: There is no â in font ptmr7t!
-Missing character: There is no € in font ptmr7t!
-Missing character: There is no œ in font ptmr7t!
-Missing character: There is no â in font ptmr7t!
-Missing character: There is no € in font ptmr7t!
-Missing character: There is no  in font ptmr7t!
-Missing character: There is no â in font ptmr7t!
-Missing character: There is no € in font ptmr7t!
-Missing character: There is no “ in font ptmr7t!
-Missing character: There is no â in font ptmr7t!
-Missing character: There is no € in font ptmr7t!
-Missing character: There is no “ in font ptmr7t!
+Missing character: There is no Â in font ptmr7t!
+Missing character: There is no · in font ptmr7t!
+Missing character: There is no Â in font ptmr7t!
+Missing character: There is no · in font ptmr7t!
+Missing character: There is no Â in font ptmr7t!
+Missing character: There is no · in font ptmr7t!
+Missing character: There is no Â in font ptmr7t!
+Missing character: There is no · in font ptmr7t!
  [15]
+Missing character: There is no â in font ptmr7t!
+Missing character: There is no € in font ptmr7t!
+Missing character: There is no œ in font ptmr7t!
+Missing character: There is no â in font ptmr7t!
+Missing character: There is no € in font ptmr7t!
+Missing character: There is no  in font ptmr7t!
+Missing character: There is no â in font ptmr7t!
+Missing character: There is no € in font ptmr7t!
+Missing character: There is no “ in font ptmr7t!
+Missing character: There is no â in font ptmr7t!
+Missing character: There is no € in font ptmr7t!
+Missing character: There is no œ in font ptmr7t!
+Missing character: There is no â in font ptmr7t!
+Missing character: There is no € in font ptmr7t!
+Missing character: There is no  in font ptmr7t!
 Missing character: There is no â in font ptmr7t!
 Missing character: There is no € in font ptmr7t!
 Missing character: There is no “ in font ptmr7t!
@@ -813,38 +806,45 @@ Missing character: There is no â in font ptmr7t!
 Missing character: There is no € in font ptmr7t!
 Missing character: There is no “ in font ptmr7t!
  [16]
+Missing character: There is no â in font ptmr7t!
+Missing character: There is no € in font ptmr7t!
+Missing character: There is no “ in font ptmr7t!
+Missing character: There is no â in font ptmr7t!
+Missing character: There is no € in font ptmr7t!
+Missing character: There is no “ in font ptmr7t!
+ [17]
 CHAPTER 5.
 
 Package hyperref Warning: Difference (2) between bookmark levels is greater 
-(hyperref)                than one, level fixed on input line 327.
+(hyperref)                than one, level fixed on input line 317.
 
 Missing character: There is no â in font ptmr7t!
 Missing character: There is no € in font ptmr7t!
 Missing character: There is no “ in font ptmr7t!
-[17
-
-]
-CHAPTER 6.
 [18
 
 ]
+CHAPTER 6.
+[19
+
+]
 No file mythesis.bbl.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 349.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 349.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 341.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 341.
 (./mythesis.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 349.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 349.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 341.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 341.
 Package rerunfilecheck Info: File `mythesis.out' has not changed.
 (rerunfilecheck)             Checksum: 409DFB95B0B0D166901D32F28567E5C4;1346.
 
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 349.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 341.
  ) 
 Here is how much of TeX's memory you used:
- 10287 strings out of 493488
- 145723 string characters out of 3141326
+ 10288 strings out of 493488
+ 145730 string characters out of 3141326
  251222 words of memory out of 3000000
  13356 multiletter control sequences out of 15000+200000
  21750 words of font info for 51 fonts, out of 3000000 for 9000
@@ -861,10 +861,10 @@ e/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2
 exmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2012/texmf-dist/
 fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2012/texmf-dist/fonts/type
 1/urw/times/utmri8a.pfb>
-Output written on mythesis.pdf (26 pages, 444146 bytes).
+Output written on mythesis.pdf (27 pages, 447250 bytes).
 PDF statistics:
- 387 PDF objects out of 1000 (max. 8388607)
- 321 compressed objects within 4 object streams
- 74 named destinations out of 1000 (max. 500000)
+ 391 PDF objects out of 1000 (max. 8388607)
+ 324 compressed objects within 4 object streams
+ 75 named destinations out of 1000 (max. 500000)
  234 words of extra memory for PDF output out of 10000 (max. 10000000)
 
