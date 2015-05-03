@@ -320,14 +320,280 @@ P. Fiorini and Z. Shiller. Motion planning in dynamic environments using velocit
  
 \chapter{RRTPI}
 
-\subsection{MDP}
+The performance of RRTs heavily depend on the choice of the distance metric used in the calculation of the nearest points (S. M. Lavalle, “From dynamic programming to RRTs: Algorithmic design of feasible trajectories,” in Control Problems in Robotics.
+Springer-Verlag, 2002.). Even in $RRT*$ algorithm the optimality guarentees are valid only for the right choice of heuristics used in the algorithm. One field that has traditionally estimated domain dependant metrics using experience is Reinforcement Learning(RL). RRTPI alos tries to estimate the domain dependant distance metric by a value function using trajectories sampled from the domain and improving its estimate of the value function by Policy Iteration technique from Reinforcement Learning. We first define few important concepts that we use in RL here and then show how the distance metric is estimated from the trajectories. 
+
+\subsection{Reinforcement Learning}
+
+We model the problem of finding the optimal path as solving an Markov Decision Process ( MDP ). A continuous MDP $M$ is a tuple $<S,A,T,R,\gamma>$ where $S \in R^{n}$ is the $n$-dimensional state space or the configuration space. $A$ is the action space. It is a set of actions in discrete domains. $T$(s,a,s') is the transition probability of reching state  $s' \in$ $S$ by performing action  $a \in$ $A$ on state  $s \in$ $S$. And for deterministic domains we can denote $T(s,a) = s'$. Note that 
+$\sum_{\forall s' \in S } T(s,a,s') = 1$. $R(s,a,s')$ is the expectation of the real valued rewards for action  $a \in$ $A$  taken at state $s \in$ $S$ thereby reaching  state $s' \in$ $S$. The rewards are usually bounded between $[R_{min}, R_{max}]$ and $\gamma $ is the discount factor.
+We begin in starting state $s_o \in S$ and take action $a_o$ and reach state $s_1$ according to the transition probability $T(s_o,a_o,s_1)$ and receive a reward $r_1$ drawn accordingly from the reward distribution $R(s_o, a_o, s_1)$. After a fixed time step, we pick the next action for the state $s_1$ which is $a_1$ according to $T(s_1, a_1, s_2)$ and get a reward $r_2$ according to $R(s_1, a_1, s_2)$. The procedure is continued till we reach our final state or maximum number of steps are reached resulting in the sequence of state, action, reward pairs $s_o, a_o,r_1, s_1,a_1.r_2,s_2, a_2,r_3,s_3... $ Our objective is to choose the sequence of actions $a_o, a_1, a_2 , a_3, ...$ such that we maximize the cumulative reward or return. We define return as $\displaystyle \sum_{t=0}^{\infty} \gamma^t r_t$, where $r_t $ is the reward at the time step t and $\gamma \in [0,1]$ 
+
+A policy $\pi$ is a mapping from state space $S$ to action space $A$ $\pi:S$x$A \rightarrow [0,1]$ , it represents the probability of choosing some action $a \in A$ for any state $s \in S$. A policy can be probabilistic or deterministic. A deterministic policy is represented as $\pi(s) = a$ where $a$ is the action selected for state $s$. On the other hand $\pi(s,a) \in [0,1]$ gives the probability as defined above. The state value function $J^{\pi}(s)$ is the expected return from any state $s$ while following a policy $\pi$. In discrete domains we can define the state value function using the Bellman equation as follows : 
+$$J^{\pi}(s) = \displaystyle \sum_{a}\pi(s,a) \sum_{s'}T(s,a,s')[ R(s,a,s')+ \gamma J^{\pi}(s') ] $$
+
+Optimal policy is defined as the one, in which for any other policy,  $\forall s\in S,  \pi$ $J^{\pi}(s) < J^{\pi^*}(s)$, where $\pi^*$ is the optimal policy. In case of continuous state spaces. we approximate the value function either using parametric approximation or non-parametric or by nearest neighbour techniques. 
+
+\subsubsection{Policy Evaluation}
+
+The bellman equation can be solved using Dynamic Programming techniques (R.S. Sutton and A.G. Barto. Reinforcement learning: An introduction, volume 28. MIT press, 1998.) if the transition probabilities are available for all possible states and actions. But it is never the case in real world systems. A popular class of algorithms solve this issue by sampling the trajectories according to a policy and estimating the value function. It is called policy evaluation. 
+
+Temporal Difference(TD) learning is a class of algorithms which estimate the value function using temporal differences (R. S. Sutton. “Learning to predict by the methods of temporal differences”. Machine Learning, 3, 1988.) of the trajectories. Given a set of N trajectories $\{s_o,a_o,r_1,s_1,a_1,r_2,s_2,... s_M\}_{i=1}^N$, TD(0) method estimates the value function $J^\pi$ using the following update rule 
+$$J^{\pi}(s_t) = (1 - \alpha) J^{\pi}(s_t) + \alpha (r_t + \gamma J^{\pi}(s_{t+1})) $$ 
+where $0 \leq  i \leq N$ and $1 \leq t \leq M_i$. The parameter $\alpha$ is also known as the step size and it determines the learning rate. It controls the bias-variance tradeoff. Lower the alpha, lower the variance. The parameter $\gamma$ determines how much importance is given to future rewards. When $\gamma $ is set to 0 only the immediate rewards are considered and when $\gamma$ is set higher future rewards are also given importance. Note that $\gamma$ is not bounded in [0,1].  TD algorithms converge when alpha is gradually decayed. 
+
+In discrete state space, all the states can be enumerated and value function can be calculated for all the points and the above equation can be applied. But in continuous state spaces one has to do some approximation. The most common way of dealing with this is to approximate the value of a new sample to the value of its nearest neighbours assuming it is locally constant. Other ways include assuming the value function is locally linear within a neighbourhood and performing regression to find out the value of a given state. Other ways include function approximation and one could even use neural networks (Issues in Using Function Approximation for ReinforcementLearningSebastian Thrun Anton SchwartzInstitut fur Informatik III Dept. of Computer Science)to approximate the value function in continuous domains.
+
+\subsection{RRTPI Algorithm}
+
+RRTPI begins with uniform estimate of the value function $J_o$ which would represent the cost-to-go metric .RRTPI works by first sampling trajectories from the state space according to a RRT algorithm. But the difference in which both algorithms build trees is that RRT uses euclidean distance to find out nearest points of any randomly sampled point where as RRTPI uses the value function over the state space. This forms roughly policy improvement step. The sampled trajectories are used to evaluate and update the value function using the TD(0) update rule. This forms the policy evaluation stage. RRTPI consists of a series of policy evaluation and improvement stages. Thus it is a kind of Policy Iteration using RRTs. 
+
+\begin{algorithm}{Build-RRT(S, $|| . ||_J$)}{
+\label{algo:Build-RRT}
+\qcomment{samples trajectories using RRTs}}
+ V(G) $\leftarrow$ {$x_{start}$};  E(G) $\leftarrow${$\phi$ } \\
+ n $\leftarrow$ 0\\
+\qwhile goal is not reached \\
+$x_{rand}$ $\leftarrow$ Sample(S);\\
+$x_{near}$ $\leftarrow$ Nearest($x_{rand}$, V(G) , $|| . ||_J $ );\\
+$(x_{new}, a, r) \leftarrow$ Extend($x_{near}$, $x_{rand}$, S);\\
+Connect $x_{new}$ to $x_{near}$\\
+V(G) $\leftarrow$ V(G) U {$ x_{new}$ }\\
+E(G) $\leftarrow$ E(G) U ($x_{new}, a, r$)\qend\\
+return G\\
+End of Algorithm
+\end{algorithm}
+
+\begin{algorithm}{Nearest($x_{rand}$, V(G) , $|| . ||_J$ )}{
+\label{algo:Nearest}
+\qcomment{Finds a point nearest to given point in the graph with respect to the value function}}
+return $x_{near} \in V(G)$ such that  $x_{near} = \displaystyle arg\max_{x \in V(G)} (|| x - x_{rand}|| ) $\\
+End of Algorithm
+\end{algorithm}
+$||x - y||_J$ = $J(x) - J(y)$ where x, y $\in$ S.
+ 
+\begin{algorithm}{Extend($x_{near}$, $x_{rand}$, S)}{
+\label{algo:Extend}
+\qcomment{Finds a point close to $x_{rand}$ that is in $\epsilon-$neighbourhood of $x_{near}$}}
+
+ $x_{new} \leftarrow$  $\displaystyle arg\max_{a \in A} ||x - x_{rand} ||_J $ and $(r,x_{new} ) \leftarrow$ MDP($x_{near}$,a)\\ 
+ return ($x_new, a, r$)\\
+End of Algorithm
+\end{algorithm}
+
+\begin{algorithm}{NN-TD(G, J)}{
+\label{algo:NN-TD}
+\qcomment{Estimates the value function J from the trajectories}}
+
+Let $Y_n$ be the set of trajectories starting at $x_start$ till leaf nodes in G.
+
+\qfor each trajectory $(s_o, a_o, r_1, s_1, a_1, r_2, s_2, ...)$ in $Y_n$\\
+\qfor each pair $(s_i,a_i,r_{i+1}, s_{i+1})$\\
+$J(s_i) = (1 - \alpha) J(s_i) + \alpha(r_i + \gamma J(s_{i+1})$\qrof\qrof\\
+return J\\
+End of Algorithm
+\end{algorithm}
 
 
-J. Barraquand and J.-C. Latombe. A Monte-Carlo algorithm for path planning with many degrees of freedom. In IEEE Int. Conf. Robot. $\&$Autom., pages 1712–1717, 1990.
+
+\begin{algorithm}{RRTPI(N)}{
+\label{algo:RRTPI}
+\qcomment{builds RRT and implements policy iteration}}
+Initialize $J_o \leftarrow 0$ uniformly for all i = 1$..$n\\
+n$\leftarrow$ 1\\
+\qwhile n < N \\
+$G_n \leftarrow$ Build-RRT($M_n,|| . ||_{J_{n-1}} $)\\
+$J_n \leftarrow$ NN-TD($G_n$ , $J_{n-1})$\\
+$n \leftarrow$ n+ 1\qend\\
+End of Algorithm
+\end{algorithm}
+
+(Efficient Continuous-Time Reinforcement Learning with Adaptive State Graphs) had used RL in graph based sampling algorithm. They show that value function based methods can be utilised to solve the motion planning tasks in unknown dynamic environments. Their approach lacks in a way that it is similar to PRM methods which has preprocessing overhead. Also it doesnt take the kinodynamics of the system into account when generating the plans.
+
+To apply the algorithm to dynamic environment we also need to modify the algorithm for effective replanning. As we saw in many RRT improvements, anytime planners are more practical in online settings than single shot RRT planners as executing the time itself might take some time and the environment would have changed in that time interval. Hence we propose a online algorithm that would utilise the time when the plan is being executed in planning and one nice framework that looks at this issue is DYNA framework proposed by sutton et al( put the fucking reference ! ) in the next chapter.
+
+\section{DYNA-RRTPI}
+
+In case of on-line planning, interactions of agent with environment might change the environment model and thus further planning is impacted. DYNA framework [17] puts together the decision making and model learning.
+\begin{figure}[htpb]
+   \begin{center}
+     \resizebox{120mm}{120mm} {\includegraphics {dyna1}}
+     \caption {Dyna 1 }
+   \label{fig:dyna-1}
+   \end{center}
+ \end{figure}
+The real experience can be used to improve a model also known as model learning or improve the value function like in reinforcement learning, sometimes called direct reinforcement learning. In the above plot we summarized the possible relationship between experience, model learning and planning, direct reinforcement learning. It can be seen that experience can improve the value function both directly and indirectly. The indirect reinforcement learning stage is sometimes referred to as planning. These indirect methods are better in the sense that they make full use of experience and require fewer environmental interactions as planning is involved where as direct reinforcement learning is much simpler and are not affected if model is biased. DYNA framework brings together all the acting, model learning, planning and direct reinforcement learning into a single framework.
+\begin{figure}[htpb]
+   \begin{center}
+     \resizebox{170mm}{150mm} {\includegraphics {dyna2}}
+     \caption {Dyna 1 }
+   \label{fig:dyna-1}
+   \end{center}
+ \end{figure}
+The figure shows how various stages interact with each other in the framework. The middle column represents the interaction between agent and environment. Left side represents the direct reinforcement learning update. In case of TD learning the value function update is the direct RL step.The right side corresponds to model based learning.An explicit model is maintained, in which each transaction is recorded. Planning takes place on learnt model using simulated experiences. For simulating experiences starting states and actions are selected using the model. We use search control to represent that in figure. Learning and planning are thus integrated in this common framework where learning is done on actual experience where as planning is done on simulated one which is based on model. The first 3 stages of acting, model learning and direct reinforcement learning are done in very small fraction of the time and planning is done in the rest of the time. An usual iteration of the agent would have it selecting an action to be performed in the current state based on some ε greedy approach. It then updates the value function and the transition is recorded in the model. Then N-iterations of planning take place on the existing transitions in the model. After each simulated transition, value function is updated which forms indirect RL update.
+Improvements have been suggested to Dyna framework like Dyna+ where the most oldest action that has not been selected gets more reward. Other methods like prioritized sweeping makes sure that planning stage is more efficient. Selection of state during simulated experience is based on the value increment they offer.
+
+We have seen that domain dependant heuristics in $RRT^*$ control the performance of the algorithm and efforts made to learn them using different methods(LQR paper reference ). We would like to do TD learning on the trajectories to learn the appropriate value function across the state space. Also we have seen in (human environment paper ) where they represent the dynamic behaviour of the environment using some sort of cost fucntion across the state space with good results.In most of the real world problems it is critical to maintain the kino-dynamic constraints of the agent. We incorporate a local planner in the Extend step to take care of the kino-dynamic constraints when generating the RRT. We also would like to make the algorithm online by interleaving planning and acting. In (Sampling based MDP Planning ) it was shown that DYNA framework beats other model free learning algorithms in sampling based MDP planning. With this motivation ,we propose an algorithm that implements policy iteration in continuous domains using RRTs and does replanning effectively using DYNA framework.  We first present the offline episodic version of the algorithm which computes path in less number of samples as it efficiently explores the state space and estimates the value function by planning using the current tree. 
+
+\subsection{Algorithm}
+
+\begin{algorithm}{DYNA-RRTPI(N)}{
+\label{algo:DYNA-RRTPI}
+\qcomment{Episodic offline version: builds RRT and implements policy iteration using DYNA framework}}
+G$\leftarrow$ Build a vanilla RRT using Euclidean distance metric\\
+$J_o \leftarrow$ NN-TD(G) i.e use the vanilla RRT over the space to initialize the J values\\ 
+n $\leftarrow$ 0\\
+\qwhile n < N \\
+$G_n \leftarrow$ Episode(S,$ || . ||_{J_{n-1}} $)\\
+$J_n \leftarrow$ NN-TD($G_n$ , $J_{n-1})$ \\
+n $\leftarrow$ n+1\\
+End of Algorithm
+\end{algorithm}
+
+\emph{Episode} procedure builds the RRT from start state to goal state using the value function and performs planning at every step.
+
+\begin{algorithm}{Episode(S, $|| . ||_J$)}{
+\label{algo:Dyna-Episode}
+\qcomment{Build a RRT using value functions in dyna framework }}
+ V(G) $\leftarrow$ {$x_{start}$};  E(G) $\leftarrow${$\phi$ } \\
+\qwhile goal is not reached \\
+$x_{rand}$ $\leftarrow$ Sample(S);\\
+$x_{near}$ $\leftarrow$ Nearest($x_{rand}$, V(G) , $|| . ||_J $ );\\
+$(x_{new}, a, r) \leftarrow$ Extend($x_{near}$, $x_{rand}$, S);\\
+\qif Not-Colliding($x_{new}$, $x_{near}$,S)\\
+\qthen Connect $x_{new}$ to $x_{near}$\\
+V(G) $\leftarrow$ V(G) U {$ x_{new}$ }\\
+E(G) $\leftarrow$ E(G) U ($x_{new}, a, r$)\\
+$J(x_{near}) \leftarrow (1 - \alpha) J (x_{near} + \alpha (r + \gamma J(x_{new})))$ \qfi\\
+J $\leftarrow$ RRT-Planning(G, J, number of iteration)\qend\\
+return G\\
+End of Algorithm
+\end{algorithm}
+Steps 3,4,5 correspond to action selection in dyna framework. Steps 8,9 corresponds to model learning. Step 10 corresponds to direct RL update and step 11 is where planning is done. 
+
+\begin{algorithm}{NN-TD(G, J)}{
+\label{algo:NN-TD}
+\qcomment{Estimates the value function J from the trajectories}}
+Let $Y_n$ be the set of trajectories starting at $x_start$ till leaf nodes in G.\\
+\qfor each trajectory $(s_o, a_o, r_1, s_1, a_1, r_2, s_2, ...)$ in $Y_n$\\
+\qfor each pair $(s_i,a_i,r_{i+1}, s_{i+1})$\\
+$J(s_i) = (1 - \alpha) J(s_i) + \alpha(r_i + \gamma J(s_{i+1})$\qrof\qrof\\
+return J\\
+End of Algorithm
+\end{algorithm}
 
 
+\begin{algorithm}{Nearest($x_{rand}$, V(G) , $|| . ||_J$ )}{
+\label{algo:Nearest}
+\qcomment{Finds a point nearest to given point in the graph with respect to the value function}}
+return $x_{near} \in V(G)$ such that  $x_{near} = \displaystyle arg\max_{x \in V(G)} (|| x - x_{rand}|| ) $\\
+End of Algorithm
+\end{algorithm}
+$||x - y||_J$ = $J(x) - J(y)$ where x, y $\in$ S.
+ 
+\begin{algorithm}{Extend($x_{near}$, $x_{rand}$, S)}{
+\label{algo:Extend}
+\qcomment{Finds a point close to $x_{rand}$ that is in $\epsilon-$neighbourhood of $x_{near}$} respecting the kinodynamic constraints}
+ $x_{new} \leftarrow$  $\displaystyle arg\max_{a \in A} ||x - x_{rand} ||_J $|| $x_{new} - x_{near} ||$ is within kinematic bounds and action $a_{max}$ which generated $x_{new}$ is within the acceleration bounds\\
+ $(r,x_{new} ) \leftarrow$ MDP($x_{near}$,a)\\ 
+ return ($x_new, a, r$)\\
+End of Algorithm
+\end{algorithm}
 
-\chapter{Future Work}
+
+\begin{algorithm}{RRT-Planning(G, $|| . ||_J$, number of iterations)}{
+\label{algo:Simulate RRT sampling trajectories from given rrt and update value function}
+\qcomment{samples trajectories using RRTs}}
+n $\leftarrow$ 0\\
+\qwhile n $<$ number of iterations\\
+Randomly sample a point $x_{begin}$ from V(G)\\
+Find a trajectory $Y$ with $x_{begin}$ as the root\\
+\qfor each pair $(s_i,a_i,r_{i+1}, s_{i+1}) \in Y$\\
+$J(s_i) = (1 - \alpha) J(s_i) + \alpha(r_i + \gamma J(s_{i+1})$\qrof\qend\\
+return J\\
+End of Algorithm
+\end{algorithm}
+
+
+For online algorithms it is not possible to predetermine paths by running multiple episodes. But DYNA-RRTPI will perform planning when the robot is executing the action. For online setting, the DYNA-RRTPI could be modified as
+
+\begin{algorithm}{Online-DYNA-RRTPI( )}{
+\label{algo:Online DYNA-RRTPI}
+\qcomment{Online version: builds RRT and implements policy iteration using DYNA framework}}
+G$\leftarrow$ Build a vanilla RRT using Euclidean distance metric\\
+$J_o \leftarrow$ NN-TD(G) i.e use the vanilla RRT over the space to initialize the J values\\ 
+\qwhile goal is not reached  \\
+$x_{rand}$ $\leftarrow$ Sample(S);\\
+$x_{near}$ $\leftarrow$ Nearest($x_{rand}$, V(G) , $|| . ||_J $ );\\
+$(x_{new}, a, r) \leftarrow$ Extend($x_{near}$, $x_{rand}$, S);\\
+\qif Not-Colliding($x_{new}$, $x_{near}$,S)\\
+\qthen Connect $x_{new}$ to $x_{near}$\\
+V(G) $\leftarrow$ V(G) U {$ x_{new}$ }\\
+E(G) $\leftarrow$ E(G) U ($x_{new}, a, r$)\\
+$J(x_{near}) \leftarrow (1 - \alpha) J (x_{near} + \alpha (r + \gamma J(x_{new})))$ \qfi\\
+J $\leftarrow$ RRT-Planning(G, J, number of iteration)\qend\\
+End of Algorithm
+\end{algorithm}
+
+Number of iterations of planning could be modified as per the time available for planning during the execution phase of robot.  Another important parameter to take care of is $\alpha$ which should typically be very small in stochastic environments for the value function to converge. $\gamma$ value is domain dependant.  The algorithm gradually builds a tree from the start to goal states in an online fashion. It uses  RRT-based planning to improve the value function estimates by using the model already learnt. Even if dynamic environments the algorithm works well because the value function adapts to the moving environment at every time step and hence the around the obstacles the value function gives unfavourable values and guides the tree towards higher value goal regions. 
+
+If the environment has undergone drastic changes where replanning is required DYNA-RRTPI could be easily modified to include replanning efficiently. The modified algorithm is given as follows.
+
+\begin{algorithm}{Replan-DYNA-RRTPI( )}{
+\label{algo:Replan-DYNA-RRTPI}
+\qcomment{Online version: builds RRT and implements policy iteration using DYNA framework}}
+G$\leftarrow$ Build a vanilla RRT using Euclidean distance metric\\
+F $\leftarrow$ initialize to empty set of forest of disconnected trees.
+$J_o \leftarrow$ NN-TD(G) i.e use the vanilla RRT over the space to initialize the J values\\ 
+\qwhile Graph G doesnt contain goal \\
+\qif Graph is not empty \\
+\qthen Prune(G,F)\\
+\qelse Intialize V(G) $\leftarrow$ $\{x_{start} \}$\qfi\\
+$x_{rand}$ $\leftarrow$ Modified-Sample(S,F);\\
+$x_{near}$ $\leftarrow$ Nearest($x_{rand}$, V(G) , $|| . ||_J $ );\\
+$(x_{new}, a, r) \leftarrow$ Extend($x_{near}$, $x_{rand}$, S);\\
+\qif Not-Colliding($x_{new}$, $x_{near}$,S)\\
+\qthen Connect $x_{new}$ to $x_{near}$\\
+V(G) $\leftarrow$ V(G) U {$ x_{new}$ }\\
+E(G) $\leftarrow$ E(G) U ($x_{new}, a, r$)\\
+$J(x_{near}) \leftarrow (1 - \alpha) J (x_{near} + \alpha (r + \gamma J(x_{new})))$ \qfi\\
+J $\leftarrow$ RRT-Planning(G, J, number of iteration)\qend\\
+End of Algorithm
+\end{algorithm}
+
+\begin{algorithm}{Prune(Graph G, Forest F)}{
+\label{algo:Prune}
+\qcomment{Perfoms collision checks on all nodes and removes nodes that are not in $C_{free}$}}
+\qfor each node q $\in$ V(G) and F\\
+\qif Not-valid (q)\\
+\qthen remove q from G and F\\
+split the tree at q and add subtrees to F\qfi\qrof\\
+\qif G is empty \\
+\qthen Initialize G and add $x_{start}$ to V(G)\qfi\\
+End of Algorithm
+\end{algorithm}
+
+\begin{algorithm}{Modified-Sample(S,F)}{
+\label{algo: Modified-Sample}
+\qcomment{Returns a point to which the RRT would try to expand to}}
+prob $\leftarrow$ Random(0,1)\\
+\qif prob $<$ $p_{goal}$\\
+\qthen $x_{result}$ $\leftarrow$ $x_{goal}$\\
+\qelse \qif prob $< p_{goal} + p_{forest}$\\
+\qthen $x_{result} \leftarrow$ root of a randomly sampled tree from $F$ , the forest of disconnected trees.\\
+\qelse $x_{result}$ $\leftarrow$ Randomly sample a point from the state space \qfi\qfi\\
+return $x_{result}$\\
+End of Algorithm
+\end{algorithm}
+
+The above modification to the regular DYNA-RRTPI would use the previous successful trees regrow the trees at each instant. For every time step , the tree is inspected for any nodes in $C_{forbidden}$ and if it finds such nodes, the algorithm breaks the tree at that node and places the subtrees in the Forest F which would be used later on for sampling for points to extend the RRT. The algorithm for replanning can be made similar to both ERRT (put reference )or DRRT(put reference ) based on the choice of parameter $p_{forest}$. In pruning stage if we maintain just a single tree instead of a forest of disconnected trees we would essentially get an analogue of ERRT where when selecting a node in \textit{Modified-Sample} procedure we would have sampled a node from the single saved trajectory or waypoint cache we stored in pruning stage. The algorithm could be modified into an analogue of DRRT if instead of storing both the sub trees in pruning stage, we throw away the tree that is not connected to the start state. Hence in that case we would have to regrow from that sub-tree which is still connected to the start state. The suggested algorithm has the good properties of both ERRT and DRRT performs better that both ERRT and DRRT in replanning tasks ( put reference of MPRRT).
+
+\section{Experiments}
+
+We evaluated our algorithm on discrete grid world domain, continous space without obstacles and continous puddle world domains. 
+\chapter{Conclusion and Future Work}
+We introduced a way of learning optimal solutions to motion planning problem in unknown non-stationary environments using RL and efficient replanning techniques. We assume just a minimum generative model which would tell if a given state is in $C_{free}$ or not. Our algorithm builds a near optimal RRT in the state space with the learnt value function in continous state spaces. We have presented episodic, offline and online versions of our algorithm. We have showed use of nearest neighbour methods for tackling the value evaluation in continuous state space. We implemented our algorithm on continuous puddle world domain for an agent follwing kino-dynamic constraints using a local planner in the extend step of growing RRT. Our algorithm DYNA-RRTPI integrates good sampling based planning techniques into a framework interleaving directRL updates, model building and planning and thus solving problems in dynamic continuous unknown environments with efficient replanning techniques follwing kino-dynamic contraints of the agent and the environment. In future instead of simulatons, we could apply our algorithm to real world 2-D robot navigation and a high dimensional non-holonomic arm navigation tasks and compare it against the state of the art methods like $RRT^*$. 
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Appendices.
