@@ -1,10 +1,13 @@
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {1.1}{\ignorespaces Agent moving in a game environment with obstacles. courtesy of supercell games.\relax }}{2}{figure.caption.6}
+\contentsline {figure}{\numberline {1.2}{\ignorespaces A 6 DoF robotic arm moving in the 3-D surrounding space\relax }}{3}{figure.caption.7}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces Process of building the RRT and extending the current tree to $x_rand$\relax }}{9}{figure.caption.10}
-\contentsline {figure}{\numberline {3.2}{\ignorespaces A snapshot of growth of RRT starting at [50;50] and goal at [95;95]the first column is at 200 samples and second column at 2000 samples.The first row is taken when sampling randomly , second row at 10 percentage bias to goal and third row at 20 percentage bias towards goal \relax }}{11}{figure.caption.11}
+\contentsline {figure}{\numberline {3.1}{\ignorespaces A RRT grown from start point [50;50]. It explores the whole state space due to the space filling property.\relax }}{9}{figure.caption.12}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Process of building the RRT and extending the current tree to $x_rand$\relax }}{10}{figure.caption.13}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces A snapshot of growth of RRT starting at [50;50] and goal at [95;95]the first column is at 200 samples and second column at 2000 samples.The first row is taken when sampling randomly , second row at 10 percentage bias to goal and third row at 20 percentage bias towards goal \relax }}{12}{figure.caption.14}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces Dyna 1 \relax }}{24}{figure.caption.13}
-\contentsline {figure}{\numberline {5.2}{\ignorespaces Dyna 1 \relax }}{25}{figure.caption.14}
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Dyna 1 \relax }}{24}{figure.caption.16}
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Dyna 1 \relax }}{25}{figure.caption.17}
 \addvspace {10\p@ }

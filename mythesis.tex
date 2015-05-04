@@ -96,15 +96,15 @@ Date:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \acknowledgements
-I would like to thank my friends, family for supporting me. I would also like to extend my gratitude to Ravi sir for his support and encouragement.
+I would like to thank my friends, family for supporting me through out my work. I would also like to extend my gratitude to Ravi sir for his guidance, support and encouragement. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Abstract
 
 \abstract
-Path planning is a widely researched area with applications in diverse fields.In its most plain setting, it involves finding a trajectory through a state space connecting free configurations and avoiding collisions. There are many proposed solutions that finds a path if it exists. First we will look at various approaches attempted at tackling path planning under kino-dynamic constraints and other settings like obstacles with or without predetermined path. We will then present a popular and widely-used sampling based technique known as Rapidly exploring random trees(RRT). There has been many improvements to the vanilla RRT algorithm like growing trees from start and goal states, adding a bias towards goal, etc. They work well in some domains. The performance of RRTs majorly depend on the choice of  distance metric we use. Standard metrics like Euclidean would not work in high dimensional domains and choosing a good distance metric is critical to make RRTs find a good solution. 
+Path planning is a widely researched area with applications in diverse fields. In its most plain setting, it involves finding a trajectory through a state space connecting free configurations and avoiding collisions with obstacles in the environment. There are many proposed solutions that find a path if one exists. First we will look at various approaches attempted at tackling path planning under kino-dynamic constraints and other settings like obstacles with or without pre-determined trajectories. We will then present a popular and widely-used sampling based technique known as Rapidly exploring random trees(RRT). There has been many improvements to the vanilla RRT algorithm like growing trees from start and goal states, adding a bias towards goal, etc. They discuss the key advantages and issues with those methods. The performance of RRTs majorly depend on the choice of  distance metric we use. Standard metrics like Euclidean would not work in high dimensional domains and choosing a good distance metric is critical to make RRTs find a good solution. Even the state of the art algorithms like $rrt^*$ are optimal only in the correct choice of heuristic cost function. Thus we need a method to find out true cost function.
 
-Learning domain dependant metrics through repeated experience is looked in Reinforcement Learning(RL). We first present a framework in RL called Markove Decisoin Process(MDP). We then introduce RRTPI algorithm which learns the geodesic distance metric used in RRTs by posing the problem as a MDP. We introduce DYNA, a framework for integrating Planning, Acting, Model-Learning and Direct RL updates. 
-We motivate how it can be used for solving the issue of path planning in non-stationary environment. We present DYNA-RRTPI algorithm to integrate Planning and Model-Learning into the original RRTPI algorithm and explain the use of it in continous state domain. We then present our results in a continous domain with kino-dynamic constraints.
+Learning domain dependant metrics through experience was attempted traditionally in Reinforcement Learning(RL). We first present a framework in RL called Markov Decisoin Process(MDP) and ways of solving it. We then introduce RRTPI algorithm which learns the geodesic distance metric used in RRTs by posing the problem as a MDP. We introduce DYNA, a framework for integrating Planning, Acting, Model-Learning and Direct RL updates. We discuss the how sampling based algorithms behave in dynamic environment and what should be done to find real time plans in non-stationary environments.
+We motivate how DYNA  can be used for solving the issue of path planning in non-stationary environment. We present DYNA-RRTPI algorithm to integrate Planning and Model-Learning in RRT algorithm and explain the use of it in continous state domain in various settings i.e offline vs online and in non-stationary environments. We then present our results in discrete and  continous domain with kino-dynamic constraints.
 
 \pagebreak
 
@@ -133,28 +133,47 @@ We motivate how it can be used for solving the issue of path planning in non-sta
 %\input{misc.tex}
 %\input{questions.tex}
 \chapter{Introduction}
-Path planning has become a central problem in Robotics since the advent of Robots in Industry floors, daily life both directly and indirectly like robotic surgeries, autonmous self-driving cars, search and rescue operations involving unmanned drones, guided missiles etc. With increasing automation in previously what were completely human operated jobs and Robots moving autonomously in land, air and water, path planning is very much essential for it to complete its mission. Even though robots vary in sensors, actuators, applications and any other physical differences, the problem of navigation in a complex environment either known before hand or unknown is essential to all applications. 
 
-Figures; UAV,  Clash of Clans and Arm
+Path planning has become a central problem in Robotics since the advent of Robots on Industry floors and in daily life. It impacts both directly and indirectly with applications involving robotic surgeries, autonmous self-driving cars, search and rescue operations involving unmanned drones, guided missiles etc. With increasing automation in previously what were completely human operated jobs using robots moving autonomously in land, air and water, path planning has become very much essential part to achieve the robot's goal. Even though different robots vary in sensors, actuators, applications and any other physical differences, the problem of navigation in a complex environment is essential to all applications. 
 
-
- In its most generic form, Path Planning is the task of finding a valid path in a given configuration space. For example, finding out a sequence of steps to be taken to move a robot from initial point to a goal position in a maze is a standard problem looked in robotics. Other examples include finding out how to move each individual motors in a robotic arm to take the gripper from initial position to a required point to grip the object. The problem is not just specific to Robotics but is applicable in other domains like Computational Biology, Digital verification. In CAD software where one has to place the components on a chip in a way so that required connections between the components can be made,path planning is used. In animation and gaming industry, various efficient path planning techniques have been implemented to make the games more realistic, and at the same time finding out a path as quick as possible to make the game run on a mobile device in real time.
+ In its most generic form, Path Planning is the task of finding a valid path in a given configuration space( we will define formally in next chapter). For example, finding out a sequence of steps to be taken to move a robot from initial point to a goal position in a maze is a standard problem looked in robotics. Other examples include finding out how to move each individual actuators in a robotic arm to take the end gripper from initial position to a required point to grip the object. The problem is not just specific to Robotics but is applicable in other domains like computational biology, digital verification. In CAD software where one has to place the components on a chip in a way so that required connections between the components can be made, path planning is used. In animation and gaming industry, various efficient path planning techniques have been implemented to make the games more realistic, and at the same time finding out a path as quick as possible to make the game run on a mobile device with limited resources in real time.
  
- For example lets consider the famous mobile game clash of clans which involves a player’s army trying to take down others village. It has various static obstacles like walls, buildings and other dynamic obstacles like troops to defend village as well. A deployed unit should figure out a path to the building to be attacked navigating through these static and dynamic obstacles. This is a classic problem that occurs in many game settings. Upon close observation one can notice the environment is discretized into grid of cells which are either free to navigate in or consist any obstacles. Each grid cell is connected to 8 surrounding cells. Such problems are relatively easier to tackle. When the search space is smaller and discrete, one can apply Dijkstra’s shortest path algorithm[put ref] or A*[put ref] algorithm to find the path from initial to final points avoiding collisions with obstacles. 
+  \begin{figure}[htpb]
+   \begin{center}
+     \resizebox{130mm}{80mm} {\includegraphics *{coc}}
+     \caption { Agent moving in a game environment with obstacles. courtesy of supercell games.}
+   \label{fig:coc}
+   \end{center}
+ \end{figure}
  
- A relatively challenging problem is when the state space is not discrete in the form of grid. For example in [figure 2], one can see a robotic arm with many joints and gripper at the end. in 3-dimensional continuous state space. To take the gripper from one position to desired position, all the joints have to be rotated appropriately. Each joint has constraints on angle it be rotated. Thus figuring out a sequence of states of angles of each joint to be followed  in the \textit{configuration space} to reach the final position avoiding collisions with obstacles in the environment and itself forms a path planning problem. Here one can notice that states are not merely the coordinates in euclidean space.
+ 
+ For example, let us consider the famous mobile game clash of clans which involves a player’s army trying to take down others village in \ref{fig:coc}. It has various static obstacles like walls, buildings and other dynamic obstacles like troops to defend village as well. A deployed unit should figure out a path to the building to be attacked navigating through these static and dynamic obstacles. This is a classic problem that occurs in many game settings. Upon close observation one can notice the environment is discretized into grid of cells which are either free to navigate in or consist any obstacles. Each grid cell is connected to 8 surrounding cells. Such problems are relatively easier to tackle. When the search space is smaller and discrete, one can apply Dijkstra’s shortest path algorithm \cite{d59} or A* \cite{hnb68} algorithm to find the path from initial to final points avoiding collisions with obstacles. 
+ 
 
-The path planning problem has been studied for decades now. One can see Choset  [et al. [41], De Berg et al. [26], Latombe [96] and LaValle [97] ] for a detailed introduction to path planning and various attempts at solving the problem. It can be seen that most of the work has been done aimed at stationary or static environments. In such environments, there would  be no obstacles or obstacles would be static if they are present. Also one can be sure that the environment doesnot change over time. Hence one has the advantage of doing a detailed plan once and using it for any future planning requirements. But in most of the real world scenarios it is rarely the case. Environment changes and obstacles are not fixed. We try and attempt solving the non-stationary environment case where the world may change over time. We do not treat the obstacles seperately but we model the obstacles also into the environment. For instance, consider a robot doing mapping task in a unknown building. It maps the environment when it enters a room and plans a way to get out of the room. The next time when the robot enters the room some objects might have been moved. Thus earlier plans are valid but necessary modifications have to be made to use them. We deal with such scenarios in which environments are non-stationary but not necessarily moving obstacles whose path can be calculated. Also we try to look at the kinamatic and dynamic constraints on the movement of the robot and try and formulate an algorithm that would obey them.
+ A relatively challenging problem is when the state space is not discrete in the form of grid. For example in \ref{fig:arm} one can see a robotic arm with many joints and gripper at the end in 3-D continuous state space. To take the gripper from one position to desired position, all the joints have to be rotated appropriately. Each joint has constraints on angle it can be rotated. Thus finding out a sequence of states of angles of each joint to be followed  in the \textit{configuration space} to reach the final position avoiding collisions with obstacles in the environment and itself forms a path planning problem. Here one can notice that states are not merely the coordinates in euclidean space but can also contain the information about linkages of the actuators and angle between the actuators.
+ 
+ 
+ 
+  \begin{figure}[htpb]
+   \begin{center}
+     \resizebox{130mm}{80mm} {\includegraphics *{arm}}
+     \caption { A 6 DoF robotic arm moving in the 3-D surrounding space}
+   \label{fig:arm}
+   \end{center}
+ \end{figure} 
+ 
+ 
+The path planning problem has been studied for decades now. One can see \cite{choset05}, \cite{deberg00} , \cite{latombe91}  and \cite{lav06} for a detailed introduction to path planning and various attempts at solving the problem. It can be seen that most of the work has been done aimed at stationary. In such environments, there would  be no obstacles or obstacles would be static if they are present. Also one can be sure that the environment doesnot change over time. Hence one has the advantage of doing a detailed plan once and using it for any future planning requirements. But in most of the real world scenarios it is rarely the case. Environment changes because of the robot's actions and obstacles are not fixed. We try and attempt solving the non-stationary environment case where the world may change over time. We do not treat the obstacles seperately but we model the obstacles also into the environment. For instance, consider a robot doing mapping task in a unknown building. It maps the environment when it enters a room and plans a way to get out of the room. The next time when the robot enters the room some objects might have been moved. Thus earlier plans are valid but necessary modifications have to be made to use them. We deal with such scenarios in which environments are non-stationary but not necessarily moving obstacles whose path can be calculated. Also we try to look at the kinamatic and dynamic constraints on the movement of the robot and try and formulate an algorithm that would obey them.
 
 In the next chapter we define the problem of path planning formally and list out different variations of the problem and some approaches that have been tried before. In the further chapters we would detail a sampling based approach called Rapidly Exploring Random Trees(RRTs) followed by our method that uses Reinforcement Learning (RL) techniques for solving the problem optimally. We conclude with experiments in various domains and future work.
 
 \chapter{Path Planning}
 
-One of the earliest breakthroughs in motion planning was the introduction of the concept of configuration space (  1979 lozano perez and wesley) .  It made possible to represent the robot by a single point. Now finding a solution became nothing but finding a path connecting those points. 
+One of the earliest breakthroughs in motion planning was the introduction of the concept of configuration space \cite{perez79}.  It made possible to represent the robot by a single point. Now finding a solution became nothing but finding a path connecting those points in configuration space. 
 
 \section{Configuration space}
   
-It allows us to specify the problem. Configuration of a robot in general includes the geometry of the robot, the environment setting and also the geometry of the obstacles. It describes the degrees of freedom the robot has. Configurations space is the set of all such possible configurations of the whole system which includes agent( or robot) , the environment and obstacles. It is generally parametrized. For example, the configuration of a robot translating in a 2-D space can be described in terms of 2 parameters x, y. If the robot is allowed to rotate then an additional parameter is required to describe the angle or orientation. The minimal number of such parameter that are required to describe a configuration of the robot is called \textit{degrees of freedom} of the robot. 
+It allows us to specify the problem. Configuration of a robot in general includes the geometry of the robot, the environment setting and also the geometry of the obstacles. It describes the degrees of freedom the robot has. Configuration space is the set of all such possible configurations of the whole system which includes agent( or robot) , the environment and obstacles. It is generally parametrized. For example, the configuration of a robot translating in a 2-D space can be described in terms of 2 parameters x, y. If the robot is allowed to rotate then an additional parameter is required to describe the angle or orientation. The minimal number of such parameter that are required to describe a configuration of the robot is called \textit{degrees of freedom} of the robot. 
 In general, there must be four components in configuration description.
 
 \begin{itemize}
@@ -166,47 +185,62 @@ In general, there must be four components in configuration description.
 
 We denote configuration space by \emph{C} and each parameter often represents a degree of freedom.
 The obstacles, static or moving, does not allow the robot to reach certain configurations. Such configurations which has collisions form forbidden configurations. In case of robotic arm, such forbidden configurations arise not only because of obstacles in the environment but also itself as each joint has limits on the rotating capacity. Let us denote them by \emph{$C_{forbidden}$} or \emph{$C_{obs}$} and rest of the states that can be reached by the robot as \emph{$C_{free}$}. 
+
 \section{The Problem}
 
-A path is defined as a continuous function with range in the configuration space \emph{C} as follows $$\pi:[0,L] \rightarrow \emph{C}$$  where L is the length of the path. The problem of motion planning is to find a path in \emph{$C_{free}$} configuration space between start and goal configurations. 
-$\pi(0) = s \in C_{free}$ and $\pi(L) = g \in C_{free}$ and $\forall i \in (0,L) \pi(i) \in C_{free} $.
-A \emph{complete} path planning algorithm should return the path in finite time if it exists and if such a path doesnt exist it should return failure. Also more often than not one would define a cost measure on the path which can be length of the path or time taken or domain specific, which is used to rank paths found. An optimal path is one with the least cost. The problem of finding the path is a PSPACE-hard [ Reif 1979 reference ] , where complete planning algorithms( put reference Lozano-Perez and Wesley, 1979; Schwartz and Sharir, 1983; Canny, 1988) exist but are not practically feasible due to their time complexity.  
+A path is defined as a continuous function with range in the configuration space \emph{C} as follows $$\pi:[0,L] \rightarrow \emph{C}$$  where L is the length of the path. $\pi(0) = s \in C_{free}$ and $\pi(L) = g \in C_{free}$ and $\forall i \in (0,L) \pi(i) \in C_{free} $.The problem of motion planning is to find a path between start and goal configurations in configuration space \emph{$C_{free}$}. 
+A \emph{complete} path planning algorithm should return the path in finite time if it exists and if such a path doesnt exist it should return failure. Also more often than not one would define a cost measure on the path which can be length of the path or time taken or it can be domain specific. It can be used to rank the found paths. An optimal path is one with the least cost. The problem of finding the path is a PSPACE-hard \cite{reif79} , where complete planning algorithms( \cite{perez79}, \cite{schsha83},  \cite{canny88} ) exist but are not practically feasible due to their time complexity.  
+
 \section{Related Work}
 The path planning problem can be categorised into static and dynamic environments. Further classification can be done based on whether we are operating in known or unknown environment. 
 \subsection{Search based algorithms}
-For simple cases in a known environment, search based planning algorithms which discretise the configuration space to grid cells and find the path from start cell to goal cell work well. A lot of algorithms have been proposed in this genre including Dijsktra's algorithm ( put the fucking reference )which is a breadth first search and with introduction of heuristics in algorithms like A* the search space is reduced. These algorithms were even modified to suit dynamic environments D* unlike A* which was a static algorithm needed to be re-run again once environment changes. Also derivates of D* exist which includes Focused D* which addressed the time complexity issues of D*  and quad tree D* which reduced the space complexity. Other modern approaches like Anytime A*, D*-lite are proposed which reduces the search and time complexity even further.
+For simple cases in a known environment, search based planning algorithms which discretise the configuration space to grid cells and find the path from start cell to goal cell can be used. A lot of algorithms have been proposed in this genre including Dijsktra's algorithm \cite{d59} which is a best-first search and with introduction of heuristics in algorithms like A*\cite{hnb68} the search space is reduced. These algorithms were even modified to suit dynamic environments D* \cite{stentz94} unlike A* which was a static algorithm needed to be re-run again once environment changes. Also derivates of D* exist which includes Focused D* \cite{stentz95} which addressed the time complexity issues of D*  and quad tree D* \cite{samet88} which reduced the space complexity. Other modern approaches like Anytime A* \cite{hr07}, D*-lite \cite{koeni02} are proposed which reduces the search and time complexity even further.
+
 \subsubsection{Issues}
- But the main limitation of this class of algorithms is that grid is a fixed topology whose resolution must be specified and paths are only optimal at level of  the resolution of the grid. There is always a trade-off between the quality of the path generated and the computational power available. Hence to solve the problems efficiently in known environments other approaches invloving combinatorially computing the explicit paths like Visibility Graph method [ insert reference]  and Artificial Potential Field methods[ insert reference ] were introduced. 
+ But the main limitation of this class of algorithms is that grid is a fixed topology whose resolution must be specified and paths are only optimal at level of  the resolution of the grid. There is always a trade-off between the quality of the path generated and the computational power available. Hence to solve the problems efficiently in known environments other approaches invloving combinatorially computing the explicit paths like Visibility Graph method \cite{visgraph00} and Artificial Potential Field method \cite{khatib86} were introduced. 
+ 
 \subsection{Artificial Potential Fields}
-Artificial Potential Field method is a practical approach( ge and cui reference 2002 ) was widely used on many real systems as it relaxed the completeness to \emph{resolution completeness} which is returning a path if it exists provided that the resolution parameter of the algorithm is set correclty. A potential field is cast in the configuration space where destination applies the attractive force and obstacles cast repulsive force and the robot follows the steepest descent in the resulting potential field to reach the destination. But this faces issue that robot might get stuck in the local optima. There were proposed solutions [reference from mid term 6] to tackle this but it does not apply to all problems in general. ARF is particularly suited for applications where translation is any direction is major degree of freedom as one calculates the potential of a point based on the distance from the source in the workspace or configuration space. 
+Artificial Potential Field method is a practical approach \cite{gecui02}
+ was widely used on many real systems as it relaxed the completeness to \emph{resolution completeness}, which is returning a path if it exists provided that the resolution parameter of the algorithm is set correclty. A potential field is cast in the configuration space where goal applies the attractive force and obstacles cast repulsive force and the robot follows the steepest descent in the resulting potential field to reach the destination. But this faces issue that robot might get stuck in the local optima. There were proposed solutions \cite{barra91} to tackle this  but it does not apply to all problems in general. ARF is particularly suited for applications where translation is any direction is major degree of freedom as one calculates the potential of a point based on the distance from the source in the workspace or configuration space. 
 \subsubsection{Issues}
- one can notice that it requires explicit representation of the obstacles in the configuration space which is not always the case in many real world tasks. Also even if they are explicitly mentioned, presence of large number of obstacles would give rise to lot of computational overhead as solution is build using obstacles representation directly. Hence only low dimensional C-spaces and simplified geometries have been solved efficiently using these methods. Avoiding such explicit representation was done in the next set of algorithms known as sampling based algorithms. These algorithms were ideally suited for unknown or partially known environments as they do not as for explicit representation of the obstacles in the configuration space.
+ One can notice that it requires explicit representation of the obstacles in the configuration space which is not always the case in many real world tasks. Also even if they are explicitly mentioned, presence of large number of obstacles would give rise to lot of computational overhead as solution is build using obstacles representation directly. Hence only low dimensional C-spaces and simplified geometries have been solved efficiently using these methods. Avoiding such explicit representation was done in the next set of algorithms known as sampling based algorithms. These algorithms were ideally suited for unknown or partially known environments as they do not as for explicit representation of the obstacles in the configuration space.
+ 
 \subsection{Sampling based planners}
-In the sampling based motion planners, the configurations in \emph{$C_{obs}$} are determined only by sampling C-space using \emph{collision detectors} which would tell us whether a given configuration is a part of $C_{free}$ or $C_{obs}$. Thus the modern collision detection algorithms keep track of simple metrics like distance between robot and obstacles in the environment to specify that. It makes even complicated models to be specified and solved efficiently using limited information about the configuration space. There is no need to enumerate all possible contact cases of our robot and obstacles nor compute the contact cases to solve for a trajectory. Also it makes the problem simpler as the collision detection can be treated as separate module. The simplicity and genarality made the sampling based planners to be successfully applicable to wide range of motion planning problems even with high dimensional configuration spaces. For a full historical evolution of sampling based planners one may look into [ reference current issues in sampling based planners]. One of the highly successful sampling based planners was Probabilistic Road Map method( insert reference ). 
+In the sampling based motion planners, the configurations in \emph{$C_{obs}$} are determined only by sampling C-space using \emph{collision detectors} which would tell us whether a given configuration is a part of $C_{free}$ or $C_{obs}$. Thus the modern collision detection algorithms keep track of simple metrics like distance between robot and obstacles in the environment to specify that. It makes even complicated models to be specified and solved efficiently using limited information about the configuration space. There is no need to enumerate all possible contact cases of our robot and obstacles nor compute the contact cases to solve for a trajectory. Also it makes the problem simpler as the collision detection can be treated as separate module. The simplicity and genarality made the sampling based planners to be successfully applicable to wide range of motion planning problems even with high dimensional configuration spaces. For a full historical evolution of sampling based
+ planners one may look into \cite{linde05}. One of the highly successful sampling based planners was Probabilistic Road Map method \cite{kavraki96}. 
+ 
 \subsubsection{Probabilistic RoadMap}
-The most basic implementation of Probabilistic RoadMap is very simple and works in two phases. In the preprocessing phase the algorithm builds a road map( a graph G(V,E))  by attempting to connect points sampled from $C_{free} $  which it uses to query in the query phase. Algorithm begins with an empty graph. In preprocessing phase it samples a point $x_{rand}$ from the state space and if it falls in $C_{free}$ it is added to vertex set \emph{V}. Then it attempts to connect all points that are in r-radius from the $x_{rand}$ in the order of incresing distance from $x_{rand}$ i.e nearest first using a simple local planner. The local planner checks if a path is possible by checking collisions with any obstacles. If there are no collisions then the points are added to the graph by joining edges between the point and $x_{rand}$. For sake of simplicity the connections are only added if the randomly sampled point is not connected to any connected components of the new point. This prevents any formation of cycles, resulting in a forest ( set of trees). There are other simpler modifications where initially the algorithm samples n points in the space and further it form trees among those n points only. In other work ( lavalle 2006), the selection of vertices has been modified from r-radius disc to k-nearest neighbours of the randomly sampled point. This forms a k-nearest graph. There were other modifications involving setting bounds on the number of vertices picked from the r-radius disc. Other ways of modifying the algorithm is to have a variable radius disc from which one tries to join points to the randomly sampled point. These versions are called k-Nearest PRM, bounded degree PRM, and variable radius PRM respectively. If a roadmap was constructed for a particular configuration, it can be used to query for paths between any pairs of configurations in the environment in the Query phase. To implement this, we connect the two query configurations to the existing roadmap and treat them like new nodes inserted into the roadmap during the previously described construction phase. If it succeeds a path is searched for in the roadmap. It is usually the case that paths generated from Probabilistic Roadmap technique have to undergo some post processing to give smooth paths. Other variants of PRMs differ in the choice when joining two configurations using the local planner. In the simplest case we used a straight line. Also how we determine the neighbors to which connection is attempted can be varied. Local planners can be made to try complicated connections and ways of choosing the points to attempt connections to.One can choose all points in the neighbouring set but that takes time. One can choose to attempt to only k-nearest neighbours within a bounded distance $d_{max}$. Such things take time for such hefty computations. One cannot afford time on such steps. Thus one has to be careful in making a tradeoff between the real-time application of the planner vs the complexity we need. PRMs are not complete. That is, if a valid path does not exist between the start and end points in $C_{free}$, they would not be able to notify that. However, it is to be noted that PRMs are probabilistically complete. If there exists a path between start and goal configurations in $C_{free}$, then the probability that PRM-roadmap contains a solution tends to 1 as the roadmap creation time tends to infinity [ insert reference 4]. Creating a roadmap takes lot of time and once it is created all future queries can make use of this prepossessing step to fetch results faster. Such problems are called multiple query problems. In contrast to this, when there is only one valid query to be made in a given setting it is called single-shot method. Frazzoli et al (Sampling-based Algorithms for Optimal Motion Planning) proposed PRM*, an optimal version of the PRM where they limit the number of points in the neighbourhood to extend to either by setting bound on k in the k-nn approach or by setting the radius of the disc. 
+The most basic implementation of Probabilistic RoadMap is very simple and works in two phases. In the preprocessing phase the algorithm builds a road map( a graph $G(V,E)$ )  by attempting to connect points sampled from $C_{free} $. It uses the roadmap to query for paths in the query phase. Algorithm begins with an empty graph. In preprocessing phase it samples a point $x_{rand}$ from the state space and if it falls in $C_{free}$ it is added to vertex set \emph{V}. Then it attempts to connect all points that are in r-radius sphere from the $x_{rand}$ in the order of incresing distance from $x_{rand}$ i.e nearest first using a simple local planner. The local planner checks if a path is possible by checking collisions with any obstacles. If there are no collisions then the points are added to the graph by joining edges between the point and $x_{rand}$. For sake of simplicity the connections are only added if the randomly sampled point is not connected to any connected components of the new point. This prevents any formation of cycles, resulting in a forest ( set of trees ). There are other simpler modifications, where initially the algorithm samples 'n' points in the space and further it form trees among those 'n' points only. In other work \cite{lav06}
+ the selection of vertices has been modified from r-radius disc to k-nearest neighbours of the randomly sampled point. This forms a k-nearest graph. There were other modifications involving setting bounds on the number of vertices picked from the r-radius disc. Other ways of modifying the algorithm is to have a variable radius disc from which one tries to join points to the randomly sampled point. These versions are called k-Nearest PRM, bounded degree PRM, and variable radius PRM respectively. If a roadmap was constructed for a particular configuration, it can be used to query for paths between any pairs of configurations in the environment in the Query phase. To implement this, we connect the two query configurations to the existing roadmap and treat them like new nodes inserted into the roadmap during the previously described construction phase. If it succeeds a path is searched for in the roadmap. It is usually the case that paths generated from Probabilistic Roadmap technique have to undergo some post processing to give smooth paths. Other variants of PRMs differ in the choice when joining two configurations using the local planner. In the simplest case we used a straight line. Also how we determine the neighbors, to which connection is attempted can be varied. Local planners can be made to try complicated connections and ways of choosing the points to attempt connections to. One can choose all points in the neighbouring set but that takes time. One can choose to attempt to only k-nearest neighbours within a bounded distance $d_{max}$. Such things take time because of hefty computations. In some scenarioes, one cannot afford time on such steps. Thus one has to be careful in making a tradeoff between the real-time application of the planner vs the complexity we need. PRMs are not complete i.e., if a valid path does not exist between the start and end points in $C_{free}$, they would not be able to notify that. However, it is to be noted that PRMs are probabilistically complete. If there exists a path between start and goal configurations in $C_{free}$, then the probability that PRM-roadmap contains a solution tends to 1 as the roadmap creation time tends to infinity
+ \cite{kavraki98}
+ Creating a roadmap takes lot of time and once it is created all future queries can make use of this prepossessing step to fetch results faster. Such problems are called multiple query problems. In contrast to this, when there is only one valid query to be made in a given setting it is called single-shot method. Frazzoli et al 
+\cite{karaman11} 
+ proposed PRM*, an optimal version of the PRM where they limit the number of points in the neighbourhood to extend to either by setting bound on k in the k-nn approach or by setting the radius of the disc. 
+
 \subsubsection*{Issues}
  This is of importance in fast and changing environments where the roadmap created might not be valid for future queries. Hence in dynamic environments, various techniques like single-query PRMs were introduced but the most successful and widely used algoritms for their simplicity are Rapidly Exploring Random Trees. We discuss RRTs and their modifications in the next section.  
 
 \chapter{Rapidly Exploring Random Trees}
 
-RRT is a single query sampling based algorithm. In the basic version the algorithm incrementally builds a tree of feasible trajectories with the start point as root. The algorithm initially samples a point $x_{rand}$ randomly in the space. It then tries to connect the point to the already existing tree by trying to connect to the \emph{nearest} point $x_{near}$ in the tree using a local planner. The local planner connects them and adds an edge to the tree if the path is not colliding with any obstacle. To mininize the collisions the algorithm instead of joining $x_{rand}$, tries to move from $x_{near}$ in the direction of $x_{rand}$ by a small $\epsilon$-distance or moving in that direction for a small $\delta$-time using the local planner resulting in a new point $x_{new}$. We would later on see the other implications of this formulation in the kino-dynamic setting. If there are no collisions in joining $x_{near}$ and $x_{new}$ an edge is added between them and algorithm proceeds to pick another point. This continues until the goal is reached or maximum points are drawn 
+RRT is a single query sampling based algorithm. In the basic version the algorithm incrementally builds a tree of feasible trajectories with the start point as root. The algorithm then samples a point $x_{rand}$ randomly in the space. It then tries to connect the point to the already existing tree by trying to connect to the \emph{nearest} point $x_{near}$ in the tree using a local planner. The local planner connects them and adds an edge to the tree if the path is not colliding with any obstacle. To mininize the collisions the algorithm instead of joining $x_{rand}$, it tries to move from $x_{near}$ in the direction of $x_{rand}$ by a small $\epsilon$-distance or moving in that direction for a small $\delta$-time using the local planner resulting in a new point $x_{new}$. We would later on see the other implications of this formulation in the kino-dynamic setting. If there are no collisions in joining $x_{near}$ and $x_{new}$ an edge is added between them and algorithm proceeds to pick another point. It is shown in \ref{fig:rrt-extend} This continues until the goal is reached or maximum points are drawn 
 
-figure : RRT basic using the euclidean distance metric.
+  \begin{figure}[htpb]
+   \begin{center}
+   \includegraphics[scale=0.45] {rrt-basic}
+%     \resizebox{80mm}{80mm} {\includegraphics *{rrt-basic}}
+     \caption { A RRT grown from start point [50;50]. It explores the whole state space due to the space filling property.}
+   \label{fig:rrt-basic}
+   \end{center}
+ \end{figure}
 
-The probability of \emph{extending} a point in the tree is directly proportional to the \emph{voronoi} region of the point. A voronoi region of a point is all the set of points in the space to which it is the nearest neighbour. Thus RRTs have excellent space filling properties. This accounts for the \emph{rapidly-exploring} aspect of the RRTs. The tree is thus streched towards the lesser exploered regions of the state space. If a big area is unexplored then the probability that the RRT will extent towards that region is higher than other regions. RRTs are shown to be probabilistically complete. The probability of finiding a solution if it exists tends to 1 as the number of samples picked tends to infinity. RRTs have been successfully implemented in many domains as seen in 
- “Rapidly-exploring Random Trees: Progress and prospects,” Al- gorithmic and Computational Robotics: New Directions, pp. 293–308, 2001.
-[3] J. Bruce and M. Veloso, “Real-time randomized path planning for robot navigation,” in Proceedings of the IEEE International Conference on Intelligent Robots and Systems (IROS), 2002.
-[4] J. Kuffner, K. Nishiwaki, S. Kagami, M. Inaba, and H. Inoue, “Motion planning for humanoid robots,” in Proceedings of the International Symposium on Robotics Research (ISRR), 2003.
-[5] J. Kim and J. Ostrowski, “Motion planning of aerial robots using Rapidly-exploring Random Trees with dynamic constraints,” in Proceed- ings of the IEEE International Conference on Robotics and Automation (ICRA), 2003.
-[6] G. Oriolo, M. Vendittelli, L. Freda, and G. Troso, “The SRT Method: Randomized strategies for exploration,” in Proceedings of the IEEE International Conference on Robotics and Automation (ICRA), 2004.) 
+The probability of \emph{extending} a point in the tree is directly proportional to the \emph{voronoi} region of the point. A voronoi region of a point is all the set of points in the space to which it is the nearest neighbour. Thus RRTs have excellent space filling properties. This accounts for the \emph{rapidly-exploring} aspect of the RRTs. The tree is thus streched towards the lesser exploered regions of the state space. If a big area is unexplored then the probability that the RRT will extent towards that region is higher than other regions. RRTs are shown to be probabilistically complete. The probability of finiding a solution if it exists tends to 1 as the number of samples picked tends to infinity. RRTs have been successfully implemented in many domains as seen in \cite{lav01, bruce02, kuffner03, kim03, oriolo04}
 
 \section{Algorithm}
  \begin{figure}[htpb]
    \begin{center}
      \resizebox{75mm}{75mm} {\includegraphics *{rrt}}
      \caption {Process of building the RRT and extending the current tree to $x_rand$}
-   \label{fig:rrt-bias}
+   \label{fig:rrt-extend}
    \end{center}
  \end{figure}
 
@@ -238,7 +272,7 @@ End of Algorithm
 \end{algorithm}
 
 \section{Improvements}
-Thus RRTs incrementally build a tree sampling points from the state space. If the state space is large it takes long times to find the path to goal. Hence a little bias is added towards goal to direct the exploration making it faster. It is incorporated in the sample function as seen in line 3 of the follwing algo.
+Thus RRTs incrementally build a tree sampling points from the state space. If the state space is large it takes long times to find the path to goal. Hence a little bias is added towards goal to direct the exploration making it faster. It is incorporated in the sample function as seen in line 3 of the \ref{algo:Bias-Sample}
 
 \begin{algorithm}{Bias-Sample(S)}{
 \label{algo:Bias-Sample}
@@ -261,61 +295,91 @@ End of Algorithm
    \end{center}
  \end{figure}
  
-Other ways in which people have looked speeden up the process is to grow multiple trees towards a region and connect them. One approach was called RRT-Connect( put the fucking reference and add more info from the ppt!). This algorithm keeps track of two trees one from the start and other from the goal states. Initially one tree is begun from start state and it is extended by a small step towards a random point to reach a target point which is then added to the first tree. The second tree now is grown towards the target point and moves in that direction by a small step. This process is continued until the second tree finds an obstacle in trying to move towards the target set by the first tree. In that case, roles of both trees are swapped and now second tree sets target states and first tree tries to reach to the target states. This is continued till both trees meet. This method is usually way faster than the vanilla RRT which explores the whole state space. Hence in applications like piano movers problem where we have to compute a path in a very short limited time such approaches could be useful.The idea of bi-directional trees worked but it limited the way goals could be defined. In many cases the goals are not stationary and it had issues even if the environment is not stationary. 
- 
-Brooks et al $(A. Brooks, T. Kaupp, and A. Makarenko, “Randomised mpc-based
-motion-planning for mobile robot obstacle avoidance,” in Robotics and Automation, 2009. ICRA ’09. IEEE International Conference on, May 2009, pp. 3962–3967.)$ proposed a way to include dynamic model of the robot and a cost function to prune the tree and find out solution paths faster. Other approaches looked at finding a better set of vertices to use in extend procedure. Shkolnik et al.$ (A. Shkolnik, M. Walter, and R. Tedrake, “Reachability-guided sam- pling for planning under differential constraints,” in Robotics and Automation, 2009. ICRA ’09. IEEE International Conference on, May 2009, pp. 2859–2865.)$ used rechable confuration set from a point to prune the possible list of vertices to be considered to extend to. Sometimes it is better to find a suboptimal solution quickly if we need online implementation of the algorithm. Ferguson et al $(D. Ferguson and A. Stentz, “Anytime, dynamic planning in high- dimensional search spaces,” in Proc. IEEE International Conference on Robotics and Automation, 2007, pp. 1310–1315.) $has used the idea of anytime planning where the algorithm produces a path anytime and when it is being executed it iterates again to find better paths. Csaba et al (RRT++ paper reference) uses the same idea and proposed RRT++ algorithm which finds a path and optimises it by running the algorithm again minimising on cost metric. 
+Other ways in which people have looked speeden up the process is to grow multiple trees towards a region and connect them. One approach was called RRT-Connect
+\cite{kuffner00}
+ This algorithm keeps track of two trees one from the start and other from the goal states. Initially one tree is begun from start state and it is extended by a small step towards a random point to reach a target point which is then added to the first tree. The second tree now is grown towards the target point and moves in that direction by a small step. This process is continued until the second tree finds an obstacle in trying to move towards the target set by the first tree. In that case, roles of both trees are swapped and now second tree sets target states and first tree tries to reach to the target states. This is continued till both trees meet. This method is usually way faster than the vanilla RRT which explores the whole state space. Hence in applications like piano movers problem where we have to compute a path in a very short limited time such approaches could be useful.The idea of bi-directional trees worked but it limited the way goals could be defined. In many cases the goals are not stationary and it had issues even if the environment is not stationary. 
+\cite{brooks09}
+ proposed a way to include dynamic model of the robot and a cost function to prune the tree and find out solution paths faster. Other approaches looked at finding a better set of vertices to use in extend procedure. Shkolnik et al.
+\cite{shkolnik09}
+used rechable confuration set  from any point to prune the possible list of vertices to be considered to extend to. Sometimes it is better to find a suboptimal solution quickly if we need online implementation of the algorithm. 
+ \cite{ferguson07}
+ has used the idea of anytime planning where the 
+algorithm produces a path quickly and when it is being executed it iterates again to find better paths. Csaba et al 
+\cite{yasin10}
+uses the same idea and proposed RRT++ algorithm which finds a path and optimises it by running the algorithm again minimising on cost metric in every iteration.
 
 Few other variants of RRTs in dynamic environments are discussed in the next chapter.
 
  \subsection{Optimality}
- The basic RRT algorithm is just probalistically complete. The solution given by RRT algorithm is not guarenteed to be optimal. Detailed analysis of the optimality of the sampling based algorithms PRM and RRT were done by Frazzoli  et al (Sampling-based Algorithms for Optimal Motion Planning) and proposed  RRG, RRT* optimal versions of the algorithms.
+ The basic RRT algorithm is just probalistically complete. The solution given by RRT algorithm is not guarenteed to be optimal. Detailed analysis of the optimality of the sampling based algorithms PRM and RRT were done by Frazzoli  et al 
+\cite{karaman11}
+ and proposed  RRG, RRT* optimal versions of the algorithms.
   In RRG ( rapidly exploring random graph) they build an incremental connected roadmap which might contain cycles also. It is similar to RRT except that everytime a new node $x_{new}$ is added to the current tree, all the points that are in a small neighbourhood $X_{near}$ ( ball of radius r) of the new node are tried to connect to the tree if they pass the collision checks. 
- They came up with a good approximation of what the \emph{r} should be so that we get an optimal graph. r(card(V)) = $\min(\gamma_{RRT^*} (log(card(V))/card(V))^{1/d}  , \eta   )$.   RRT* is an extension of the approach where we try and maintain tree property of the graph given by RRG when ever a new node is added by removing \emph{redundant} edges. There is an additional \emph{rewiring} procedure in RRT*  that does exactly this. Rewiring is done as storing tree structures is much easier and efficient from memory perspective and also searching for a path becomes trivial in case of tree data structures. They define a cost function for every point and the goal is to generate a path of minimum cost between start and end states. Let \textit{v} be any point in the tree. Let Parent(\textit{v}) denote the parent node in the tree data structure.  Cost(\textit{v}) denotes the cost and one can generate a child node cost from the parent node by Cost(\textit{v}) = Cost(Parent(\textit{v}) +  Cost(Line( Parent(\textit{v}, v)) In RRT* any node is only added to the tree if it passes through the low cost path. Everytime $x_{new}$ is added , it considers connections to all points in $X_{near}$, the points in a small neighbourhood of $x_{new}$ defined by them. But not all connections are accepted, only in the following two cases. i) If the point is already a part of the tree, then connection is made through $x_{new}$ only if the cost of the path through the current parent of the point is greater than the path through $x_{new}$.  ii) an edge is created to the vertex in $X_{near}$ that can be connected to $x_{new }$ along the minimum cost path. Another version called k-nearest RRT* implements the same but considers only the k-nearest neighbours instead of the r-radius disc where k is governed by k(card (V)) = $k_{RRG}$ log(card (V )) for populating the nearest nodes to be expanded $X_{near}$.
+ They came up with a good approximation of what the \emph{r} should be so that we get an optimal graph. r(card(V)) = $\min(\gamma_{RRT^*} (log(card(V))/card(V))^{1/d}  , \eta   )$.   RRT* is an extension of the approach where we try and maintain tree property of the graph given by RRG when ever a new node is added by removing \emph{redundant} edges. There is an additional \emph{rewiring} procedure in RRT*  that does exactly this. Rewiring is done as storing tree structures is much easier and efficient from memory perspective and also searching for a path becomes trivial in case of tree data structures. They define a cost function for every point and the goal is to generate a path of minimum cost between start and end states. Let \textit{v} be any point in the tree. Let Parent(\textit{v}) denote the parent node in the tree data structure.  Cost(\textit{v}) denotes the cost and one can generate a child node cost from the parent node by 
+
+Cost(\textit{v}) = Cost(Parent(\textit{v}) +  Cost(Line( Parent(\textit{v}, v)) 
+
+In RRT* any node is only added to the tree if it passes through the low cost path. Everytime $x_{new}$ is added , it considers connections to all points in $X_{near}$, the points in a small neighbourhood of $x_{new}$ defined by them. But not all connections are accepted, only in the following two cases. i) If the point is already a part of the tree, then connection is made through $x_{new}$ only if the cost of the path through the current parent of the point is greater than the path through $x_{new}$.  ii) an edge is created to the vertex in $X_{near}$ that can be connected to $x_{new }$ along the minimum cost path. Another version called k-nearest RRT* implements the same but considers only the k-nearest neighbours instead of the r-radius disc where k is governed by k(card (V)) = $k_{RRG}$ log(card (V )) for populating the nearest nodes set $X_{near}$ to be expanded.
  
 \subsection{Issues}
  
- Even though it is an optimal extension of the vanilla RRT algorithm , it is dufficult to apply it in domains with underactuated or complicated domains (LQR-$RRT^*$: Optimal Sampling-Based Motion Planning with Automatically Derived Extension Heuristics) as it requires us to design a distance metric cost and also we need to come up with the node extension method that has lot of domain dependant terms. The entire optimality argument in Frazzoli et al ( Sampling-based Algorithms for Optimal Motion Planning ) depends on those two heuristics and if the values we use are off the optimal values, $RRT^*$ would no longer produce good optimal paths. In most of the modern real world systems requiring motion planning like autonomous cars, unmanned drones, and other humanoid robots with complex linkages, more ofthen than not we would tend to find underactuated dynamics ( the number of controllable degrees of freedom are less than the actual degrees of freedom ). Hence we need an algorithm that works well in high dimensional underactuated systems also. Attempts have been made by Perez et al( LQR-$RRT^*$: Optimal Sampling-Based Motion Planning with Automatically Derived Extension Heuristics ) to derive the two heuristics used in $RRT*$ by locally linearizing the domain and applying Linear Quadratic Regulation on that domain. But is not very intuitive why it would work in a complex domain where the dynamics are not linearizable. For example if there are obstacles are random parts of the domain one cannot expect to do LQR using data in some part of the domain and generalize it to the entire space. We might get a good estimate in some cases but there is no guarentee that it will work in all domains. This gives the motivation to our work where we would like to use some methodology to learn these domain dependant metrics from the trajectories instead of plainly applying regression. We would see int he future chapters that Reinforcement Learning(RL) is traditionally one field of Computer Science where domain dependant metrics have been learnt through experience with the environment. 
+ Even though RRT* is an optimal extension of the vanilla RRT algorithm , it is dufficult to apply it in domains with underactuated or complicated domains 
+\cite{perez12}
+ as it requires us to design a distance metric cost and also we need to come up with the node extension method that has lot of domain dependant terms. The entire optimality argument in
+\cite{karaman11} 
+  depends on those two heuristics and if the values we use are off the optimal values, $RRT^*$ would no longer produce good optimal paths. In most of the modern real world systems requiring motion planning like autonomous cars, unmanned drones, and other humanoid robots with complex linkages, more often than not we would tend to find underactuated dynamics ( the number of controllable degrees of freedom are less than the actual degrees of freedom ). Hence, we need an algorithm that works well in high dimensional underactuated systems also. Attempts have been made by Perez et al
+\cite{perez12}
+     to derive the two heuristics used in $RRT*$ by locally linearizing the domain and applying Linear Quadratic Regulation on that domain. But is not very intuitive why it would work in a complex domain where the dynamics are not linearizable. For example if there are obstacles are random parts of the domain one cannot expect to do LQR using data in some part of the domain and generalize it to the entire space. We might get a good estimate in some cases but there is no guarentee that it will work in all domains. This gives the motivation to our work where we would like to use some methodology to learn these domain dependant metrics from the trajectories instead of plainly applying regression. We would see int he future chapters that Reinforcement Learning(RL) is traditionally one field of Computer Science where domain dependant metrics have been learnt through experience 
  
 \chapter{Planning in Dynamic Environment} 
 
-Traditionally one way to look at Dynamic environment was to include the time also in the state space. So instead of simply planning in configuration \emph{C} space now planning is done in Configuration-Time \emph{C-T} space as introduced by Fraichard (  Fraichard. Trajectory planning in a dynamic workspace: a ‘state-time’ approach. Advanced Robotics, 13(1):75–94, 1999.). They address the problem of moving obstacles and dynamical constraints of the workspace in the robot in a unified way by solving in the state-time space. They model the problem with dynamical constraints as canonical trajectories which are trajectories with discrete and piecewise linear accelerations. We use the same formulation in our experiments later on. They use canonical trajectories in finding a shortest path in the state-time space.  In (J. van den Berg and M. Overmars. Roadmap-based motion planning in dynamic environments. IEEE Transactions on Robotics, 21(5):885–897, 2005  ) they use a two level planner to find safe trajectories in dynamic environment consisting of both static and dynamic domains. They use the roadmap constructed initially considering only the static obstacles and use two level search when querying a path from start to goal configurations. The local planner finds trajectories using depth first search on a state-time grid and and the global planner uses the local trajectories generated and and performs $A*$ search on them to find a path to goal configuration.
-
-Svenstrup et al.(Trajectory Planning for Robots in Dynamic Human Environments) implemented a trajectory planning algorithm using RRTs dynamic human environments by modelling as \emph{C-T} space with Model Predictive Control, where only a small part of the trajectory is executed when the new point is being calculated in the rrt iteration. They modelled dynamic human environment as a potential field with humans as obstacles emitting repulsive field and finding a mininum cost path according to the cost of traversing in the potential field. They have encoded the dynamic nature of the environment using the dynamic potential field equation which is 
+One way to look at Dynamic environment was to include the time also in the state space. So instead of simply planning in configuration \emph{C} space now planning is done in Configuration-Time \emph{C-T} space as introduced by Fraichard
+\cite{fraichard99} 
+ They address the problem of moving obstacles and dynamical constraints of the workspace in the robot in a unified way by solving in the state-time space. They model the problem with dynamical constraints as canonical trajectories which are trajectories with discrete and piecewise linear accelerations. We use the same formulation in our experiments later on. They use canonical trajectories in finding a shortest path in the state-time space.  In 
+\cite{jm05} 
+  they use a two level planner to find safe trajectories in dynamic environment consisting of both static and dynamic domains. They use the roadmap constructed initially considering only the static obstacles and use two level search when querying a path from start to goal configurations. The local planner finds trajectories using depth first search on a state-time grid and and the global planner uses the local trajectories generated and and performs $A*$ \cite{hnb68} search on them to find a path to goal configuration.
+Svenstrup et al. \cite{svestrup10}
+implemented a trajectory planning algorithm using RRTs dynamic human environments by modelling as \emph{C-T} space with Model Predictive Control, where only a small part of the trajectory is executed when the new point is being calculated in the RRT iteration. They modelled dynamic human environment as a potential field with humans as obstacles emitting repulsive field and finding a mininum cost path according to the cost of traversing in the potential field. They have encoded the dynamic nature of the environment using the dynamic potential field equation which is 
 $$G(t) = g_1(x(t)) + g_2(x(t), \emph{P}(t) )+ g_3(x(t)) $$
-where G is the value of the potential field and $g_1$ corresponds to cost because of the position of the robot in the environment neglecting the obstacles. $g_2$ relates the cost associated with the robot based on its distance from the obstacles and $g_3$ rewards the robot if its moving towards the goal. Based on this dynamic potential function they have successfully implemented path planning using RRTs following this potential field in a simulated artificial human environment. This gives motivation for encoding the dynamic nature of the environment in \textit{value} function like metric and following RRT procedure. The disadvantage of this method like any other potential field method is that it might run into local minima. Our approach which we define later uses similar value functions but it is learnt using another framework called Reinforcement Learning which we will introduce later. It also gives motivation for an anytime algorithmic framework where we could improve upon our solutions if there is time available during the online execution. We use another framework called DYNA (Put dyna reference here ! ) where we do planning in the time available and improve our solutions. 
-
+where G is the value of the potential field and $g_1$ corresponds to cost because of the position of the robot in the environment neglecting the obstacles. $g_2$ relates the cost associated with the robot based on its distance from the obstacles and $g_3$ rewards the robot if its moving towards the goal. Based on this dynamic potential function they have successfully implemented path planning using RRTs following this potential field in a simulated artificial human environment. This gives motivation for encoding the dynamic nature of the environment in \textit{value} function like metric and following RRT procedure. The disadvantage of this method like any other potential field method is that it might run into local minima. Our approach which we define later uses similar value functions but it is learnt using another framework called Reinforcement Learning which we will introduce later. It also gives motivation for an anytime algorithmic framework where we could improve upon our solutions if there is time available during the online execution. We use another framework called DYNA 
+\cite{dyna92}
+where we do planning in the time available and improve our solutions. 
 On the other hand PRMs could also be adapted to dynamic environment by working in Configuration - Time space. But since there is no necessity that motion of obstacles should be periodic or follow a certain path, the state space in which the RRT is growing could be highly transitionary. Hence building the roadmap in preprocessing stage doesnt help much. Hence single shot methods like RRTs are preferred. 
 
 
-K. Fujimura. Motion planning in dynamic environments. Springer-Verlag, Tokyo, Japan, 1991.
 
-K. Fujimura. Time-mini mum routes in time-dependent networks. IEEE Transactions
-on Robotics and Automation, 11(3):343–351, 1995.
  
 \section{Predicting obstacles} 
 
-Modelling the path of the obstacle in the environment can be classified into three categories. First is the worst case situation where the obstacle is trying to actively collide with the agent. Aoude et al (Aoude GS, Luders BD, How JP (2010a) Sampling-based threat assessment algorithms for intersection collisions involving errant drivers. In: IFAC Symposium on Intel- ligent Autonomous Vehicles, Lecce, Italy) proposed an algorithm which models the whole problem from the game theoretic standpoint as a pursuit evasion game where obstacle is the pursuer and agent is the evader. It uses RRTs to simulate possible trajectories of pursuer and there by finding out reachability set in a given time frame. They have included timestamp in the state representation to keep track of time with respect to trajectories. The resulting algorithm , RRT-Reach is a two-phase exploration-pursuit modification to vanilla RRT. Kutawa et al. (Motion Planning for a Driving using RRT ; Yoshiaki Kuwata, Gaston A. Fiore, Justin Teo, Emilio Frazzoli, and Jonathan P. How) implemented similar ideas where they check if a trajectory is colliding with any obstacle and generate plans to avoid the obstacle using a map of the state space. Another way of modelling the obstacles are by looking at their current dynamics and predicting their future trajectories assuming them to follow a fixed mode of operation i.e by propogating its dynamics forward. The predicion can be done using a Kalman filter or any continuous bayes filters. It works well for short term prediction but when the obstacles are not periodic or not following a certiain fixed path then they do not predict the obstacles properly to be used by any path planning algorithm. Another way of modelling dynamic obstacles is by assuming them to follow different patterns in different parts of the state space. And we use previous trajectories across the state space to predict those patterns. Using discrete state space predicting techniques a motion model is developed where the object transitions from one state to other state with some transition probability which they attempt to learn. In clustering based techniques, previous trajectories are clubbed together into representative clusters and a new partial path is identified against its suitable representative cluster which would give the prediction on the future path of the obstacle. Due to the discretizations we need to perform to implement discrete state space techniques they may suffer from overfitting if the resolution is set too high unlike the clustering based techniques. Fulgenzii et al (Fulgenzi C, Tay C, Spalanzani A, Laugier C (2008) Probabilistic navigation in dynamic environment using rapidly-exploring random trees and gaussian processes. In: IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS), Nice, France, pp 1056–1062) uses Guassian Processes to model the dynamic obstacles in a RRT based path planner. Aoude et al (Probabilistically Safe Motion Planning to Avoid Dynamic Obstacles with Uncertain Motion Patterns
-Georges S. Aoude · Brandon D. Luders · Joshua M. Joseph · Nicholas Roy · Jonathan P. How) proposed a method that uses Chance constraint RRTs to calculate the reachability set and Guassian Process regression to predict the future states of the obstacles. However with increasing number of obstacles and complex paths it becomes more difficult to keep track of all the obstacle trajectories. 
+Modelling the path of the obstacle in the environment can be classified into three categories
+\cite{aoude13}
+First is the worst case situation where the obstacle is trying to actively collide with the agent. Aoude et al 
+\cite{aoude10}
+proposed an algorithm which models the whole problem from the game theoretic standpoint as a pursuit evasion game where obstacle is the pursuer and agent is the evader. It uses RRTs to simulate possible trajectories of pursuer and there by finding out reachability set in a given time frame. They have included timestamp in the state representation to keep track of time with respect to trajectories. The resulting algorithm , RRT-Reach is a two-phase exploration-pursuit modification to vanilla RRT. Kutawa et al. 
+\cite{kutawa08}
+ implemented similar ideas where they check if a trajectory is colliding with any obstacle and generate plans to avoid the obstacle using a map of the state space. Another way of modelling the obstacles are by looking at their current dynamics and predicting their future trajectories assuming them to follow a fixed mode of operation i.e by propogating its dynamics forward. The predicion can be done using a Kalman filter or any continuous bayes filters. It works well for short term prediction but when the obstacles are not periodic or not following a certiain fixed path then they do not predict the obstacles properly to be used by any path planning algorithm. Another way of modelling dynamic obstacles is by assuming them to follow different patterns in different parts of the state space. And we can use previous trajectories across the state space to predict those patterns. In 
+\cite{aoude13}
+  Using discrete state space predicting techniques a motion model is developed where the object transitions from one state to other state with some transition probability which they attempt to learn. In clustering based techniques, previous trajectories are clubbed together into representative clusters and a new partial path is identified against its suitable representative cluster which would give the prediction on the future path of the obstacle. Due to the discretizations we need to perform to implement discrete state space techniques they may suffer from overfitting if the resolution is set too high unlike the clustering based techniques. Fulgenzii et al 
+\cite{fulgenzi08}  
+  uses Guassian Processes to model the dynamic obstacles in a RRT based path planner. Aoude et al
+  \cite{aoude13}
+proposed a method that uses Chance constraint RRTs to calculate the reachability set and Guassian Process regression to predict the future states of the obstacles. However with increasing number of obstacles and complex paths it becomes more difficult to keep track of all the obstacle trajectories. 
 
 In non-stationary and partially known environment where we do not have obstacle models, instead of predicting the path of obstacles efficient replanning can be done using RRTs. We look at some of the approaches ot do that in the next section.
 
  \section{Replanning}
  
-A RRT that has been build for an environment would become invalid when the environment changes. One approach would be to do replanning whenever the environment changes. But it is highly time consuming in case of complex domains. Hence some improvements to replanning have been proposed based on temporal coherence assumptions. Bruce et al (J. Bruce and M. Veloso, “Real-time randomized path planning for robot navigation,” in Proceedings of IROS-2002, Switzerland, October 2002, an earlier version of this paper appears in the Proceedings of the RoboCup-2002 Symposium.) proposed that the solutions discovered should be put in a waypoint cache which could be used in the later iteration of the RRT. In this version which they call Execution Extended RRT( ERRT), every time environment changes they do replanning from scratch. But with some proability $p_{waypoint}$ the points that are in waypoint cache from the previous successful runs are used to guide the RRT to reach goal quicker. In practise ERRT performs much better than the naive RRT( put referene of ERRT) if there are small incremental changes to the configuration space $C_{free}$ as the states that were in successful trajectories in the previous runs could be used for the current run also. Ferguson et al(  D. Ferguson, N. Kalra, and A. Stentz, “Replanning with rrts,” in Proc. IEEE International Conference on Robotics and Automation ICRA 2006, 2006, pp. 1243–1248.) exploit temporal coherence assumption in a different way where they use large parts of previous trajectories itself instead of just guiding the path. After an RRT is build, if the environment changes they check all the current states of the trajectory if its still valid with respect to the changed conditions. If any part of the tree is invalid, the invalid part is pruned and the remaining portion of the tree is used to initialise the next episode of search and tree is regrown from that. This algorithm goes by the name Dynamic RRT(DRRT). It can be seen that at every iteration there is a large overhead of collision checking with all the nodes in the tree. But the advantage is that a large part of the tree is already planned from the previous iteration.  Zucker et al(  M. Zucker, J. Kuffner, and M. Branicky, “Multipartite rrts for rapid replanning in dynamic environments,” in Proc. IEEE International Conference on Robotics and Automation, 2007, pp. 1603–1609. ) combines ideas from both to propose MultiPartite RRT(MPRRT) algorithm which maintains a forest $F$ of disconnected trees which lie in $C_{free}$ but are not connected to the start node of the RRT $T$. Whenever the environment is changed any nodes that are still not in $C_{free}$ are removed from the tree $T$ and the disconnected subtree that are formed as a part of the removal are placed in the forest of subtrees $F$. After pruning the start point may lie in the tree $T$ in which case RRT build operation is performed else the entire tree is put in the forest $F$ and RRT is run from scratch again. The main difference between this and other approaches is during sampling one of the trees in the forest $F$ are sampled and the root of the sampled tree is attempted to connect to the RRT by the standard RRT-Extend procedure described in Chapter 3. These algorithms motivate the effectiveness of replanning in dynamic environments without explicity keeping track of all the obstacles in the environment with undefined motion patterns.
+A RRT that has been build for an environment would become invalid when the environment changes. One approach would be to do replanning from scratch whenever the environment changes. But it is highly time consuming in case of complex domains. Hence some improvements to replanning have been proposed based on temporal coherence assumptions. Bruce et al
+\cite{errt}
+ proposed that the solutions discovered should be put in a waypoint cache which could be used in the later iteration of the RRT. In this version which they call Execution Extended RRT( E-RRT), every time environment changes they do replanning from scratch. But with some proability $p_{waypoint}$ the points that are in waypoint cache from the previous successful runs are used to guide the RRT to reach goal quicker. In practise ERRT performs much better than the naive RRT
+ \cite{errt}
+ if there are small incremental changes to the configuration space $C_{free}$ as the states that were in successful trajectories in the previous runs could be used for the current run also. Ferguson et al
+\cite{drrt}
+ exploit temporal coherence assumption in a different way where they use large parts of previous trajectories itself instead of just guiding the path. After an RRT is build, if the environment changes they check all the current states of the trajectory if its still valid with respect to the changed conditions. If any part of the tree is invalid, the invalid part is pruned and the remaining portion of the tree that is still connected to the start point is used to initialise the next episode of search and tree is regrown from that. This algorithm goes by the name Dynamic RRT(D-RRT). It can be seen that at every iteration there is a large overhead of collision checking with all the nodes in the tree. But the advantage is that a large part of the tree is already planned from the previous iteration.  Zucker et al
+ \cite{mprrt}
+  combines ideas from both to propose Multi-Partite RRT(MP-RRT) algorithm which maintains a forest $F$ of disconnected trees which lie in $C_{free}$ but are not connected to the start node of the RRT $T$. Whenever the environment is changed any nodes that are still not in $C_{free}$ are removed from the tree $T$ and the disconnected subtree that are formed as a part of the removal are placed in the forest of subtrees $F$. After pruning the start point may lie in the tree $T$ in which case RRT build operation is performed else the entire tree is put in the forest $F$ and RRT is run from scratch again. The main difference between this and other approaches is during sampling one of the trees in the forest $F$ are sampled and the root of the sampled tree is attempted to connect to the RRT by the \ref{algo:Extend} procedure described in Chapter 3. These algorithms motivate the effectiveness of replanning in dynamic environments without explicity keeping track of all the obstacles in the environment with undefined motion patterns.
  
 We present our algorithm which learns a value function across the state space and does replanning to tackle motion planning in non-stationary environments. We present few preliminaries in the next chapter and introduce RRTPI algorithm.
- 
- 
-P. Leven and S. Hutchinson. Real-time motion planning in changing environments. In Proc. International Sym- posium on Robotics Research, 2000. 
- 
- B. Baginski. The Z3 method for fast path planning in dynamic environments. In Proceedings of IASTED Conference on Applications of Control and Robotics, pages 47–52, 1996.
- 
- J. Kim and J. P. Ostrowski. Motion planning of aerial robot using rapidly-exploring random trees with dy- namic constraints. In IEEE Int. Conf. Robot. $\&$ Autom., 2003.
- 
-P. Fiorini and Z. Shiller. Time optimal trajectory planning in dynamic environments. Journal of Applied Mathematics and Computer Science, 7(2):101–126, 1997.
-
-P. Fiorini and Z. Shiller. Motion planning in dynamic environments using velocity obstacles. International Journal of Robotics Research, 17(7):760–772, 1998. 
  
  
 \chapter{RRTPI}
@@ -458,7 +522,7 @@ End of Algorithm
  V(G) $\leftarrow$ {$x_{start}$};  E(G) $\leftarrow${$\phi$ } \\
 \qwhile goal is not reached \\
 $x_{rand}$ $\leftarrow$ Sample(S);\\
-$x_{near}$ $\leftarrow$ Nearest($x_{rand}$, V(G) , $|| . ||_J $ );\\
+$x_{near}$ $\leftarrow$ Modified-Nearest($x_{rand}$, V(G) , $|| . ||_J $ );\\
 $(x_{new}, a, r) \leftarrow$ Extend($x_{near}$, $x_{rand}$, S);\\
 \qif Not-Colliding($x_{new}$, $x_{near}$,S)\\
 \qthen Connect $x_{new}$ to $x_{near}$\\
@@ -482,11 +546,13 @@ return J\\
 End of Algorithm
 \end{algorithm}
 
+The basic nearest procedure in \ref{algo:Nearest} does not work well without proper initialization as lot of points tend to have same J value in the beginning. We modified the procedure to work with any intialization. We use euclidean distance to sort the points whose J values are close. This reduced the time taken to find the solution.
 
-\begin{algorithm}{Nearest($x_{rand}$, V(G) , $|| . ||_J$ )}{
-\label{algo:Nearest}
+\begin{algorithm}{Modified-Nearest($x_{rand}$, V(G) , $|| . ||_J$ )}{
+\label{algo: Modified-Nearest}
 \qcomment{Finds a point nearest to given point in the graph with respect to the value function}}
-return $x_{near} \in V(G)$ such that  $x_{near} = \displaystyle arg\max_{x \in V(G)} (|| x - x_{rand}|| ) $\\
+ $X_{near} \leftarrow$ subset of vertices in V(G) such that  $x_{near} = \displaystyle arg\max_{x \in V(G)} (|| x - x_{rand}|| ) $\\
+ return $x_{near} \in X_{near}$ that is closest to the goal when compared using euclidean distance\\
 End of Algorithm
 \end{algorithm}
 $||x - y||_J$ = $J(x) - J(y)$ where x, y $\in$ S.
@@ -550,7 +616,7 @@ $J_o \leftarrow$ NN-TD(G) i.e use the vanilla RRT over the space to initialize t
 \qthen Prune(G,F)\\
 \qelse Intialize V(G) $\leftarrow$ $\{x_{start} \}$\qfi\\
 $x_{rand}$ $\leftarrow$ Modified-Sample(S,F);\\
-$x_{near}$ $\leftarrow$ Nearest($x_{rand}$, V(G) , $|| . ||_J $ );\\
+$x_{near}$ $\leftarrow$ Modified-Nearest($x_{rand}$, V(G) , $|| . ||_J $ );\\
 $(x_{new}, a, r) \leftarrow$ Extend($x_{near}$, $x_{rand}$, S);\\
 \qif Not-Colliding($x_{new}$, $x_{near}$,S)\\
 \qthen Connect $x_{new}$ to $x_{near}$\\
@@ -590,7 +656,8 @@ The above modification to the regular DYNA-RRTPI would use the previous successf
 
 \section{Experiments}
 
-We evaluated our algorithm on discrete grid world domain, continous space without obstacles and continous puddle world domains. 
+We evaluated our algorithm on discrete grid world domain, continous space without obstacles and continous puddle world domains.
+ (  Fraichard. Trajectory planning in a dynamic workspace: a ‘state-time’ approach. Advanced Robotics, 13(1):75–94, 1999.). 
 \chapter{Conclusion and Future Work}
 We introduced a way of learning optimal solutions to motion planning problem in unknown non-stationary environments using RL and efficient replanning techniques. We assume just a minimum generative model which would tell if a given state is in $C_{free}$ or not. Our algorithm builds a near optimal RRT in the state space with the learnt value function in continous state spaces. We have presented episodic, offline and online versions of our algorithm. We have showed use of nearest neighbour methods for tackling the value evaluation in continuous state space. We implemented our algorithm on continuous puddle world domain for an agent follwing kino-dynamic constraints using a local planner in the extend step of growing RRT. Our algorithm DYNA-RRTPI integrates good sampling based planning techniques into a framework interleaving directRL updates, model building and planning and thus solving problems in dynamic continuous unknown environments with efficient replanning techniques follwing kino-dynamic contraints of the agent and the environment. In future instead of simulatons, we could apply our algorithm to real world 2-D robot navigation and a high dimensional non-holonomic arm navigation tasks and compare it against the state of the art methods like $RRT^*$. 
 
@@ -601,31 +668,346 @@ We introduced a way of learning optimal solutions to motion planning problem in 
 %\chapter{Appendix}
 %\input{appendix.tex}
 % Bibliography.
-\pagebreak
-\begin{singlespace}
-  \begin{small}
-	\bibliography{bibliography}
-  \end{small}
-\end{singlespace}
+%\pagebreak
+%\begin{singlespace}
+%  \begin{small}
+%	\bibliography{D59} E. Dijkstra. A note on two problems in connexion with graphs. Numerische Mathe- matik, 1:269–271, 1959.
+%  \end{small}
+%\end{singlespace}
+
+\begin{thebibliography}{99}
+
+\bibitem{lamport94}
+  Leslie Lamport,
+  \emph{\LaTeX: a document preparation system},
+  Addison Wesley, Massachusetts,
+  2nd edition,
+  1994.
+
+\bibitem{d59}
+	E. Dijkstra, 
+  \emph{A note on two problems in connection with graphs},
+	Numerische Mathematik,
+  1959.
+
+\bibitem{hnb68}
+	P. Hart, N. Nilsson, and B. Rafael, 
+  \emph{A formal basis for the heuristic determination of minimum cost paths},
+	IEEE Transactions on Systems Science and Cybernetics, 4:100107,
+	 1968.
+
+
+\bibitem{choset05}
+	H. Choset, K. Lynch, S. Hutchinson, G. Kantor, W. Burgard, L. Kavraki, and S. Thrun,
+  \emph{Principles of Robot Motion: Theory, Algorithms, and Implementations},
+	MIT Press, Cambridge, MA,
+	 2005.
+	 
+\bibitem{deberg00}
+ M.deBerg,M.vanKreveld,M.Overmars,and O.Schwarzkopf ,
+  \emph{ComputationalGeom- etry: Algorithms and Applications},
+	Springer-Verlag, Heidelberg, Germany, 2nd edition
+	 2000.
+
+\bibitem{latombe91}
+	J. Latombe,
+  \emph{Robot Motion Planning},
+	Kluwer Academic Publishers, Boston, MA,
+	 1991.
+	 
+ \bibitem{lav06}
+	S.LaValle,
+  \emph{PlanningAlgorithms},
+	Cambridge University Press, New York,
+	 2006.
+
+ \bibitem{perez79}
+	Tomás Lozano-Pérez and Michael A. Wesley,
+  \emph{An algorithm for planning collision-free paths among polyhedral obstacles},
+	Commun. ACM 22, 10, 560-570,
+	 1979.
+
+ \bibitem{canny88}
+  J.Canny,
+  \emph{MIT Press, Cambridge, MA},
+	MIT Press, Cambridge, MA,
+	 1988.
+
+ \bibitem{schsha83}
+	J. Schwartz and M. Sharir,
+  \emph{On the piano movers’ problem: I. The case of a two-dimensional rigid polygonal body moving amidst polygonal barriers},
+	Communications on Pure and Applied Mathematics, 36:345–398,
+	 1983.
+
+ \bibitem{reif79}
+	J.Reif,
+  \emph{Complexity of the mover’s problem and generalizations},
+	 In Proc. IEEE Symp. on Foundations of Computer Science, pages 421–427,
+	 1979.
+
+
+ \bibitem{stentz95}
+	A. Stentz,
+  \emph{The focussed D* algorithm for real-time replanning},
+	 Proceedings of the International Joint Conference on Artificial Intelligence, pp. 1652–1659,
+	 1995.
+
+ \bibitem{koeni02}
+	S.Koenigand, M.Likhachev,
+  \emph{D*Lite},
+	 In Proceedings of the National Conference on Artificial Intelligence (AAAI),
+	 2002.
+
+%quadtrees 
+ \bibitem{samet88}
+	H. Samet,
+  \emph{An Overview of Quadtrees, Octrees, and Related Hierarchical
+Data Structures},
+	 NATO ASI Series, Vol. F40,
+	 1988.
+	 
+	 %D*
+	  \bibitem{stentz94}
+	Stentz, Anthony,
+  \emph{Optimal and Efficient Path Planning for Partially-Known Environments},
+	Proceedings of the International Conference on Robotics and Automation: 3310–3317,
+	 1994.
+	 
+	 
+ \bibitem{hr07}
+	Eric A. Hansen, Rong Zhou,
+  \emph{Anytimre A* Anytime heuristic search},
+	 Journal of Artificial Intelligence Research - JAIR ,
+	 2007.
+	 
+%A*	 
+	  \bibitem{hnr68}
+	Hart, P., Nilsson, N., Raphael, B,
+  \emph{A formal basis for the heuristic determination of
+minimum cost paths},
+	 IEEE Transactions on Systems Science and Cybernetics (SSC),
+4 (2), 100–107,
+	 1968.	 
+	 
+
+ %visibility graphs
+	  \bibitem{visgraph00}
+	de Berg Mark, van Kreveld Marc, Overmars Mark, Schwarzkopf, Otfried,
+  \emph{Chapter 15: Visibility Graphs},
+	 Computational Geometry (2nd ed.), Springer-Verlag, pp. 307–317,
+	 2000.	 
+	 
+
+%arf	 
+	  \bibitem{khatib86}
+	O. Khatib,
+  \emph{Real-time obstacle avoidance for manipulators and mobile robots},
+	 International Journal of Robotics Research, 5(1):90–98,
+	 1986.	 
+
+
+
+%practical arf
+	  \bibitem{gecui02}
+	S.S. Ge, Y.J. Cui,
+  \emph{Dynamic Motion Planning for Mobile Robots Using Potential Field Method},
+	Autonomous Robots, Volume 13, Issue 3, pp 207-222 November,
+	 2002.	 
+
+%practical arf
+	  \bibitem{barra91}
+	J. Barraquand and J. Latombe,
+  \emph{Robot motion planning: a distributed representation approach},
+	International Journal of Robotics Research, 10(6):628649,
+	1991.	 
+
+
+%rrt-star and prm-star
+	  \bibitem{karaman11}
+	Sertac Karaman and Emilio Frazzoli ,
+  \emph{Sampling-based algorithms for optimal motion planning},
+	International Journal of Robotics Research, June , 846-894,
+	2011.	 
+
+ %prob comp prm
+	  \bibitem{kavraki98}
+	L. E. Kavraki, M. N. Kolountzakis, and J. C. Latombe,
+  \emph{Analysis of probabilistic roadmaps for path planning},
+	IEEE Transactions on Roborics and Automation, 14(1):166-171,
+	1998.	 
+	
+%lavalle 2006
+	  \bibitem{lav06}
+	S. M. LaValle,
+  \emph{Planning Algorithms},
+	Cambridge University Press,
+	2006.	 
+
+
+%prm
+	  \bibitem{kavraki96}
+	L. E. Kavraki, P. Svestka, J. C. Latombe, and M. H. Overmars.,
+  \emph{Probabilistic roadmaps for path planning in high-dimensional configuration spaces},
+	IEEE Transactions on Robotics and Automation, 12(4):566-580,
+	1996.	 
+
+%practical arf
+	  \bibitem{linde05}
+	S. R. Lindemann and S. M. LaValle ,
+  \emph{Current issues in sampling-based motion planning},
+	In P. Dario and R. Chatila, editors, Eleventh International Symposium on Robotics Research, pages 36-54. Springer,
+	2005.	 
+
+	  \bibitem{lav01}
+	Steven M. Lavalle and James J. Kuffner ,
+  \emph{Rapidly-exploring Random Trees: Progress and prospects},
+	 Algorithmic and Computational Robotics: New Directions, pp. 293-308,
+	2001.	 
+	
+	  \bibitem{bruce02}
+	J. Bruce and M. Veloso,
+  \emph{Real-time randomized path planning for robot navigation},
+	in Proceedings of the IEEE International Conference on Intelligent Robots and Systems (IROS),
+	2002.	 
+	
+	  \bibitem{kuffner03}
+	J. Kuffner, K. Nishiwaki, S. Kagami, M. Inaba, and H. Inoue,
+  \emph{Motion planning for humanoid robots},
+	in Proceedings of the International Symposium on Robotics Research (ISRR),
+	2003.	 
+	
+
+	  \bibitem{kim03}
+	J. Kim and J. Ostrowski,
+  \emph{Motion planning of aerial robots using Rapidly-exploring Random Trees with dynamic constraints},
+	in Proceedings of the IEEE International Conference on Robotics and Automation (ICRA)
+	2003.	 
+	
+
+	  \bibitem{oriolo04}
+	 G. Oriolo, M. Vendittelli, L. Freda, and G. Troso,
+  \emph{The SRT Method: Randomized strategies for exploration},
+	in Proceedings of the IEEE International Conference on Robotics and Automation (ICRA),
+	2004.	 
+
+
+ \bibitem{kuffner00}
+	 James J. Kuffner Jr. , Steven M. Lavalle ,
+  \emph{RRT-Connect: An efficient approach to single-query path planning},
+	in Proceedings of the IEEE International Conference on Robotics and Automation (ICRA),
+	2000.	
+
+ \bibitem{brooks09}
+	 A. Brooks, T. Kaupp, and A. Makarenko,
+  \emph{Randomised mpc-based motion-planning for mobile robot obstacle avoidance,},
+	in Proceedings of the IEEE International Conference on Robotics and Automation (ICRA),
+	2009.	
+
+ \bibitem{shkolnik09}
+	 A. Shkolnik, M. Walter, and R. Tedrake,
+  \emph{Reachability guided sampling for planning under differential constraints},
+	in Proceedings of the IEEE International Conference on Robotics and Automation (ICRA),
+	2009.	
+
+ \bibitem{ferguson07}
+	D. Ferguson and A. Stentz,
+  \emph{Anytime, dynamic planning in high- dimensional search spaces},
+	in Proceedings of the IEEE International Conference on Robotics and Automation (ICRA),
+	2007.	
+	
+
+ \bibitem{yasin10}
+	Yasin Abbasi-Yadkori, Joseph Modayil and Csaba Szepesvari,
+  \emph{Extending Rapidly-Exploring Random Trees for Asymptotically Optimal Anytime Motion Planning},
+	IEEE/RSJ International Conference on Intelligent Robots and Systems,
+	2010.	
+
+ \bibitem{perez12}
+	A. Perez, R. Platt, G. Konidaris, L. Kaelbling, and T. Lozano Perez,
+  \emph{LQR-RRT : Optimal sampling-based motion planning with automatically derived extension heuristics},
+	in Proceedings of the IEEE International Conference on Robotics and Automation,
+	2012.	
+	
+	
+	
+	
+	
+Fraichard. Trajectory planning in a dynamic workspace: a ‘state-time’ approach. Advanced Robotics, 13(1):75–94, 1999.
+
+  \bibitem{fraichard99}
+	Fraichard,
+  \emph{Trajectory planning in a dynamic workspace: a ‘state-time’ approach},
+	dvanced Robotics, 13(1):75–94, 
+	1999.
+	
+J. van den Berg and M. Overmars. Roadmap-based motion planning in dynamic environments. IEEE Transactions on Robotics, 21(5):885–897, 2005 
+ \bibitem{jm05}
+	J. van den Berg and M. Overmars,
+  \emph{Roadmap-based motion planning in dynamic environments. IEEE Transactions on Robotics},
+	 IEEE Transactions on Robotics, 21(5):885–897, 
+	 2005.
+	 
+	 
+ \bibitem{svestrup10}
+	Aalborg Universitet , Mikael Bak , Thomas Andersen , Hans Jørgen , Mikael Svenstrup , Thomas Bak , Hans Jørgen Andersen,
+  \emph{Trajectory Planning for Robots in Dynamic Human Environments},
+	IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS), 
+	2010.
+	
+ \bibitem{dyna92}
+	Richard S. Sutton,
+  \emph{Reinforcement Learning Architectures},
+	Proceedings of International Symposium on Neural Information Processing , 
+	1992.
+	
+ \bibitem{aoude13}
+	Georges S. Aoude, Brandon D. Luders, Joshua M. Joseph, Nicholas Roy, Jonathan P. How,
+  \emph{Probabilistically safe motion planning to avoid dynamic obstacles with uncertain motion patterns},
+	Autonomous Robots
+	July Volume 35, Issue 1, pp 51-76,
+	2013.	
+	
+
+ \bibitem{aoude10}
+	Aoude GS, Luders BD, How JP,
+  \emph{Sampling-based threat assessment algorithms for intersection collisions involving errant drivers},
+	in IFAC Symposium on Intelligent Autonomous Vehicles, Lecce, Italy,
+	2010.	
+	
+ \bibitem{kutawa08}
+	Yoshiaki Kuwata, Gaston A. Fiore, Justin Teo, Emilio Frazzoli, Jonathan P. How,
+  \emph{Motion Planning for Urban Driving using RRT},
+	In Proceedings of the IEEE/RSJ International Conference on Intelligent Robots and Systems , 
+	2008.
+	
+	 \bibitem{fulgenzi08}
+	Fulgenzi C, Tay C, Spalanzani A, Laugier C,
+  \emph{Probabilistic navigation in dynamic environment using rapidly-exploring random trees and gaussian processes},
+	in: IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS), Nice, France, pp 1056–1062
+	2008.	
+	
+ \bibitem{errt}
+	J. Bruce and M. Veloso,
+  \emph{Real-time randomized path planning for robot navigation},
+	in Proceedings of IROS-2002, Switzerland, October 2002, an earlier version of this paper appears in the Proceedings of the RoboCup-2002 Symposium.
+	
+ \bibitem{drrt}
+	D. Ferguson, N. Kalra, and A. Stentz,
+  \emph{Replanning with RRTs},
+	in Proc. IEEE International Conference on Robotics and Automation ICRA ,
+	 2006. 
+	 
+ \bibitem{mprrt}
+	M. Zucker, J. Kuffner, and M. Branicky,
+  \emph{Multipartite rrts for rapid replanning in dynamic environments},
+	in Proc. IEEE International Conference on Robotics and Automation (ICRA) pp. 1603–1609 , 
+	2007.
+
+	
+	
+\end{thebibliography}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \end{document}
-%\begin{algorithm}{IfForWhile}{
-%\label{algo:ifforwhile}
-%\qcomment{demonstrates control structures}}
-%\qfor $i \qlet 1$ \qto $n$ \\
-%\qdo $x_{i} \qlet x_{i}^{2}$; \\
-%$y_{i} \qlet x_{i} - y_{i}$ \qrof\\
-%\qif $A = B$ \label{line:ifAisB}\\
-%\qthen do whatever is necessary if $A$ equals $B$\\
-%\qelse do something else\\
-%and wait for better times \qfi\\
-%\qwhile $Q \neq \emptyset$ \\
-%\qdo let $q$ be the first element of $Q$ and remove it from $Q$\\
-%do something with $q$ \qend \\
-%\qrepeat \\
-%do something really weird
-%\quntil you get sufficiently tired of it\\
-%\qreturn $42$
-%\end{algorithm}

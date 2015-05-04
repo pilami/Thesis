@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.6.30)  3 MAY 2015 15:45
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.6.30)  4 MAY 2015 08:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -464,9 +464,6 @@ Document Style - pseudocode environments for use with the `algorithmicx' style
 \c@flaw=\count150
  (./mythesis.aux
 
-LaTeX Warning: Label `fig:rrt-bias' multiply defined.
-
-
 LaTeX Warning: Label `algo:Build-RRT' multiply defined.
 
 
@@ -482,10 +479,10 @@ LaTeX Warning: Label `fig:dyna-1' multiply defined.
 LaTeX Warning: Label `algo:NN-TD' multiply defined.
 
 
-LaTeX Warning: Label `algo:Nearest' multiply defined.
-
-
 LaTeX Warning: Label `algo:Extend' multiply defined.
+
+
+Package natbib Warning: Citation `lav06' multiply defined.
 
 )
 \openout1 = `mythesis.aux'.
@@ -632,26 +629,26 @@ l.98 \acknowledgements
 
 ] [1
 
-] [2
-
-] (./mythesis.toc
-LaTeX Font Info:    Try loading font information for U+msa on input line 7.
+]
+LaTeX Font Info:    Try loading font information for U+msa on input line 104.
 
 (/usr/local/texlive/2012/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2009/06/22 v3.00 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 7.
+LaTeX Font Info:    Try loading font information for U+msb on input line 104.
 
 (/usr/local/texlive/2012/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2009/06/22 v3.00 AMS symbols B
-) [3
+) [2
+
+]
+(./mythesis.toc [3
 
 ])
 \tf@toc=\write4
 \openout4 = `mythesis.toc'.
 
- [4]
-(./mythesis.lot)
+ [4] (./mythesis.lot)
 \tf@lot=\write5
 \openout5 = `mythesis.lot'.
 
@@ -663,216 +660,78 @@ File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 
  [6
 
-] (./introduction.tex)
+]
+(./introduction.tex)
 CHAPTER 1.
+<coc.pdf, id=203, 845.04686pt x 597.50786pt>
+File: coc.pdf Graphic file (type pdf)
+ <use coc.pdf>
+Package pdftex.def Info: coc.pdf used on input line 143.
+(pdftex.def)             Requested size: 845.0448pt x 597.5064pt.
 Missing character: There is no ‚ in font ptmr7t!
 Missing character: There is no Ä in font ptmr7t!
 Missing character: There is no ô in font ptmr7t!
 Missing character: There is no ‚ in font ptmr7t!
 Missing character: There is no Ä in font ptmr7t!
 Missing character: There is no ô in font ptmr7t!
-[1
+ [1
 
-] [2]
+]
+<arm.pdf, id=215, 845.04686pt x 597.50786pt>
+File: arm.pdf Graphic file (type pdf)
+ <use arm.pdf>
+Package pdftex.def Info: arm.pdf used on input line 159.
+(pdftex.def)             Requested size: 845.0448pt x 597.5064pt.
+ [2 <./coc.pdf>]
+[3 <./arm.pdf>]
 CHAPTER 2.
-LaTeX Font Info:    Try loading font information for OMS+ptm on input line 161.
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 180.
 
 (/usr/local/texlive/2012/texmf-dist/tex/latex/psnfss/omsptm.fd
 File: omsptm.fd 
 )
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <10.95> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 161.
- [3
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 180.
+ [4
 
-] [4]
-[5] [6] [7]
+] [5]
+[6] [7] [8]
 CHAPTER 3.
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ú in font ptmr7t!
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ù in font ptmr7t!
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ì in font ptmr7t!
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ú in font ptmr7t!
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ù in font ptmr7t!
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ú in font ptmr7t!
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ù in font ptmr7t!
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ú in font ptmr7t!
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ù in font ptmr7t!
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ú in font ptmr7t!
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ù in font ptmr7t!
-[8
+<rrt-basic.pdf, id=326, 845.04686pt x 597.50786pt>
+File: rrt-basic.pdf Graphic file (type pdf)
+ <use rrt-basic.pdf>
+Package pdftex.def Info: rrt-basic.pdf used on input line 229.
+(pdftex.def)             Requested size: 380.26758pt x 268.87605pt.
+ [9
 
-] <rrt.png, id=234, 433.62pt x 375.4025pt>
+ <./rrt-basic.pdf>] <rrt.png, id=350, 433.62pt x 375.4025pt>
 File: rrt.png Graphic file (type png)
  <use rrt.png>
-Package pdftex.def Info: rrt.png used on input line 207.
+Package pdftex.def Info: rrt.png used on input line 241.
 (pdftex.def)             Requested size: 433.61894pt x 375.40158pt.
- [9 <./rrt.png>]
-<rrtnobias.pdf, id=253, 2208.25pt x 1003.75pt>
+ [10 <./rrt.png>] <rrtnobias.pdf, id=372, 2208.25pt x 1003.75pt>
 File: rrtnobias.pdf Graphic file (type pdf)
  <use rrtnobias.pdf>
-Package pdftex.def Info: rrtnobias.pdf used on input line 256.
+Package pdftex.def Info: rrtnobias.pdf used on input line 290.
 (pdftex.def)             Requested size: 2208.24463pt x 1003.74756pt.
 
-<rrtbias01.pdf, id=255, 2208.25pt x 1003.75pt>
+<rrtbias01.pdf, id=374, 2208.25pt x 1003.75pt>
 File: rrtbias01.pdf Graphic file (type pdf)
  <use rrtbias01.pdf>
-Package pdftex.def Info: rrtbias01.pdf used on input line 257.
+Package pdftex.def Info: rrtbias01.pdf used on input line 291.
 (pdftex.def)             Requested size: 2208.24463pt x 1003.74756pt.
 
-<rrtbias02.pdf, id=257, 2208.25pt x 1003.75pt>
+<rrtbias02.pdf, id=376, 2208.25pt x 1003.75pt>
 File: rrtbias02.pdf Graphic file (type pdf)
  <use rrtbias02.pdf>
-Package pdftex.def Info: rrtbias02.pdf used on input line 258.
+Package pdftex.def Info: rrtbias02.pdf used on input line 292.
 (pdftex.def)             Requested size: 2208.24463pt x 1003.74756pt.
-Missing character: There is no ‚ in font cmr10!
-Missing character: There is no Ä in font cmr10!
-Missing character: There is no ú in font cmr10!
-Missing character: There is no ‚ in font cmr10!
-Missing character: There is no Ä in font cmr10!
-Missing character: There is no ù in font cmr10!
-Missing character: There is no ‚ in font cmr10!
-Missing character: There is no Ä in font cmr10!
-Missing character: There is no ô in font cmr10!
-Missing character: There is no ‚ in font cmr10!
-Missing character: There is no Ä in font cmr10!
-Missing character: There is no ì in font cmr10!
-Missing character: There is no ‚ in font cmr10!
-Missing character: There is no Ä in font cmr10!
-Missing character: There is no ú in font cmr10!
-Missing character: There is no ‚ in font cmr10!
-Missing character: There is no Ä in font cmr10!
-Missing character: There is no ù in font cmr10!
-Missing character: There is no ‚ in font cmr10!
-Missing character: There is no Ä in font cmr10!
-Missing character: There is no ô in font cmr10!
-Missing character: There is no ‚ in font cmr10!
-Missing character: There is no Ä in font cmr10!
-Missing character: There is no ì in font cmr10!
-Missing character: There is no ‚ in font cmr10!
-Missing character: There is no Ä in font cmr10!
-Missing character: There is no ú in font cmr10!
-Missing character: There is no ‚ in font cmr10!
-Missing character: There is no Ä in font cmr10!
-Missing character: There is no ù in font cmr10!
-Missing character: There is no ‚ in font cmr10!
-Missing character: There is no Ä in font cmr10!
-Missing character: There is no ì in font cmr10!
-
-Overfull \hbox (675.86304pt too wide) in paragraph at lines 266--268
-[]\OT1/ptm/m/n/10.95 Brooks et al $\OT1/cmr/m/n/10.95 (\OML/cmm/m/it/10.95 A:Br
-ooks; T:Kaupp; andA:Makarenko; Randomisedmpc \OMS/cmsy/m/n/10.95 ^^@ \OML/cmm/m
-/it/10.95 basedmotion \OMS/cmsy/m/n/10.95 ^^@ \OML/cmm/m/it/10.95 planningformo
-bilerobotobstacleavoidance; inRoboticsandAutomation; \OT1/cmr/m/n/10.95 2009\OM
-L/cmm/m/it/10.95 :ICRA\OT1/cmr/m/n/10.95 09\OML/cmm/m/it/10.95 :IEEEInternation
-alConferenceon; May\OT1/cmr/m/n/10.95 2009\OML/cmm/m/it/10.95 ; pp:\OT1/cmr/m/n
-/10.95 39623967\OML/cmm/m/it/10.95 :\OT1/cmr/m/n/10.95 )$
- []
-
-
-Overfull \hbox (278.12415pt too wide) in paragraph at lines 266--268
-\OML/cmm/m/it/10.95 plingforplanningunderdifferentialconstraints; inRoboticsand
-Automation; \OT1/cmr/m/n/10.95 2009\OML/cmm/m/it/10.95 :ICRA\OT1/cmr/m/n/10.95 
-09\OML/cmm/m/it/10.95 :IEEEInternationalConferenceon; May\OT1/cmr/m/n/10.95 200
-9\OML/cmm/m/it/10.95 ; pp:\OT1/cmr/m/n/10.95 28592865\OML/cmm/m/it/10.95 :\OT1/
-cmr/m/n/10.95 )$
- []
-
-
-Overfull \hbox (113.5227pt too wide) in paragraph at lines 266--268
-\OML/cmm/m/it/10.95 dimensionalsearchspaces; inProc:IEEEInternationalConference
-onRoboticsandAutomation; \OT1/cmr/m/n/10.95 2007\OML/cmm/m/it/10.95 ; pp:\OT1/c
-mr/m/n/10.95 13101315\OML/cmm/m/it/10.95 :\OT1/cmr/m/n/10.95 )$\OT1/ptm/m/n/10.
-95 has
- []
-
-[10] [11 <./rrtnobias.pdf> <./rrtbias01.pdf> <./rrtbias02.pdf>] [12] [13]
+ [11]
+[12 <./rrtnobias.pdf> <./rrtbias01.pdf> <./rrtbias02.pdf>] [13] [14]
 CHAPTER 4.
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ò in font ptmr7t!
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ô in font ptmr7t!
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ì in font ptmr7t!
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ì in font ptmr7t!
-[14
+[15
 
-]
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ì in font ptmr7t!
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ì in font ptmr7t!
-Missing character: There is no ¬ in font ptmr7t!
-Missing character: There is no ∑ in font ptmr7t!
-Missing character: There is no ¬ in font ptmr7t!
-Missing character: There is no ∑ in font ptmr7t!
-Missing character: There is no ¬ in font ptmr7t!
-Missing character: There is no ∑ in font ptmr7t!
-Missing character: There is no ¬ in font ptmr7t!
-Missing character: There is no ∑ in font ptmr7t!
- [15]
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ú in font ptmr7t!
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ù in font ptmr7t!
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ú in font ptmr7t!
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ù in font ptmr7t!
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ì in font ptmr7t!
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ú in font ptmr7t!
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ù in font ptmr7t!
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ì in font ptmr7t!
- [16] [17]
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ì in font ptmr7t!
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ì in font ptmr7t!
-Missing character: There is no ‚ in font ptmr7t!
-Missing character: There is no Ä in font ptmr7t!
-Missing character: There is no ì in font ptmr7t!
- [18]
+] [16] [17] [18]
 CHAPTER 5.
 Missing character: There is no ‚ in font ptmr7t!
 Missing character: There is no Ä in font ptmr7t!
@@ -882,7 +741,7 @@ Missing character: There is no Ä in font ptmr7t!
 Missing character: There is no ù in font ptmr7t!
 
 Package hyperref Warning: Difference (2) between bookmark levels is greater 
-(hyperref)                than one, level fixed on input line 326.
+(hyperref)                than one, level fixed on input line 390.
 
 [19
 
@@ -893,57 +752,147 @@ Missing character: There is no ú in font ptmr7t!
 Missing character: There is no ‚ in font ptmr7t!
 Missing character: There is no Ä in font ptmr7t!
 Missing character: There is no ù in font ptmr7t!
- [20] [21] [22] <dyna1.pdf, id=405, 845.04686pt x 597.50786pt>
+ [20] [21] [22] <dyna1.pdf, id=565, 845.04686pt x 597.50786pt>
 File: dyna1.pdf Graphic file (type pdf)
 
 <use dyna1.pdf>
-Package pdftex.def Info: dyna1.pdf used on input line 420.
+Package pdftex.def Info: dyna1.pdf used on input line 484.
 (pdftex.def)             Requested size: 845.0448pt x 597.5064pt.
- <dyna2.pdf, id=406, 845.04686pt x 597.50786pt>
+ <dyna2.pdf, id=566, 845.04686pt x 597.50786pt>
 File: dyna2.pdf Graphic file (type pdf)
  <use dyna2.pdf>
-Package pdftex.def Info: dyna2.pdf used on input line 428.
+Package pdftex.def Info: dyna2.pdf used on input line 492.
 (pdftex.def)             Requested size: 845.0448pt x 597.5064pt.
 
-Overfull \hbox (30.72534pt too wide) in paragraph at lines 428--429
+Overfull \hbox (30.72534pt too wide) in paragraph at lines 492--493
  [] 
  []
 
 Missing character: There is no Œ in font ptmr7t!
 Missing character: There is no µ in font ptmr7t!
-[23] [24 <./dyna1.pdf>] [25 <./dyna2.pdf>] [26] [27] [28] [29] [30] [31]
+[23] [24 <./dyna1.pdf>] [25 <./dyna2.pdf>] [26] [27] [28] [29] [30]
+Missing character: There is no ‚ in font ptmr7t!
+Missing character: There is no Ä in font ptmr7t!
+Missing character: There is no ò in font ptmr7t!
+Missing character: There is no ‚ in font ptmr7t!
+Missing character: There is no Ä in font ptmr7t!
+Missing character: There is no ô in font ptmr7t!
+Missing character: There is no ‚ in font ptmr7t!
+Missing character: There is no Ä in font ptmr7t!
+Missing character: There is no ì in font ptmr7t!
+ [31]
 CHAPTER 6.
 [32
 
 ]
-No file mythesis.bbl.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 613.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 613.
-(./mythesis.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 613.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 613.
+Missing character: There is no √ in font ptmr7t!
+Missing character: There is no ° in font ptmr7t!
+Missing character: There is no √ in font ptmr7t!
+Missing character: There is no © in font ptmr7t!
+Missing character: There is no ‚ in font ptmri7t!
+Missing character: There is no Ä in font ptmri7t!
+Missing character: There is no ô in font ptmri7t!
+Missing character: There is no ‚ in font ptmr7t!
+Missing character: There is no Ä in font ptmr7t!
+Missing character: There is no ì in font ptmr7t!
+Missing character: There is no ‚ in font ptmri7t!
+Missing character: There is no Ä in font ptmri7t!
+Missing character: There is no ô in font ptmri7t!
+Missing character: There is no ‚ in font ptmr7t!
+Missing character: There is no Ä in font ptmr7t!
+Missing character: There is no ì in font ptmr7t!
+Missing character: There is no ‚ in font ptmr7t!
+Missing character: There is no Ä in font ptmr7t!
+Missing character: There is no ì in font ptmr7t!
+ [33
+
+]
+Missing character: There is no ‚ in font ptmr7t!
+Missing character: There is no Ä in font ptmr7t!
+Missing character: There is no ì in font ptmr7t!
+Missing character: There is no ‚ in font ptmr7t!
+Missing character: There is no Ä in font ptmr7t!
+Missing character: There is no ì in font ptmr7t!
+Missing character: There is no ‚ in font ptmr7t!
+Missing character: There is no Ä in font ptmr7t!
+Missing character: There is no ì in font ptmr7t!
+Missing character: There is no ‚ in font ptmr7t!
+Missing character: There is no Ä in font ptmr7t!
+Missing character: There is no ì in font ptmr7t!
+pdfTeX warning (ext4): destination with the same identifier (name{cite.lav06}) 
+has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.840 	  \bibitem{lav06}
+                         [34]
+Missing character: There is no ‚ in font ptmr7t!
+Missing character: There is no Ä in font ptmr7t!
+Missing character: There is no ò in font ptmr7t!
+Missing character: There is no ‚ in font ptmr7t!
+Missing character: There is no Ä in font ptmr7t!
+Missing character: There is no ô in font ptmr7t!
+Missing character: There is no ‚ in font ptmr7t!
+Missing character: There is no Ä in font ptmr7t!
+Missing character: There is no ì in font ptmr7t!
+ [35]
+Missing character: There is no ‚ in font ptmri7t!
+Missing character: There is no Ä in font ptmri7t!
+Missing character: There is no ò in font ptmri7t!
+Missing character: There is no ‚ in font ptmri7t!
+Missing character: There is no Ä in font ptmri7t!
+Missing character: There is no ô in font ptmri7t!
+Missing character: There is no ‚ in font ptmr7t!
+Missing character: There is no Ä in font ptmr7t!
+Missing character: There is no ì in font ptmr7t!
+Missing character: There is no ‚ in font ptmr7t!
+Missing character: There is no Ä in font ptmr7t!
+Missing character: There is no ì in font ptmr7t!
+Missing character: There is no ‚ in font ptmr7t!
+Missing character: There is no Ä in font ptmr7t!
+Missing character: There is no ì in font ptmr7t!
+Missing character: There is no √ in font ptmr7t!
+Missing character: There is no ∏ in font ptmr7t!
+Missing character: There is no √ in font ptmr7t!
+Missing character: There is no ∏ in font ptmr7t!
+Missing character: There is no ‚ in font ptmr7t!
+Missing character: There is no Ä in font ptmr7t!
+Missing character: There is no ì in font ptmr7t!
+ [36]
+Missing character: There is no ‚ in font ptmr7t!
+Missing character: There is no Ä in font ptmr7t!
+Missing character: There is no ì in font ptmr7t!
 
 
-Package rerunfilecheck Warning: File `mythesis.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
+Package natbib Warning: There were multiply defined citations.
 
-Package rerunfilecheck Info: Checksums for `mythesis.out':
-(rerunfilecheck)             Before: E7AB53615A8930B21BB2034A15650D36;1617
-(rerunfilecheck)             After:  69E40BFB1C35B985D69949D917A8117C;1632.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1013.
+[37]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1013.
+ (./mythesis.aux
+
+Package natbib Warning: Citation(s) may have changed.
+(natbib)                Rerun to get citations correct.
+
+)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1013.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1013.
+
+Package rerunfilecheck Info: File `mythesis.out' has not changed.
+(rerunfilecheck)             Checksum: 69E40BFB1C35B985D69949D917A8117C;1632.
+
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 613.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1013.
  ) 
 Here is how much of TeX's memory you used:
- 10445 strings out of 493488
- 147170 string characters out of 3141326
- 253827 words of memory out of 3000000
- 13378 multiletter control sequences out of 15000+200000
- 21750 words of font info for 51 fonts, out of 3000000 for 9000
+ 10661 strings out of 493488
+ 150288 string characters out of 3141326
+ 254160 words of memory out of 3000000
+ 13534 multiletter control sequences out of 15000+200000
+ 22379 words of font info for 51 fonts, out of 3000000 for 9000
  957 hyphenation exceptions out of 8191
- 43i,8n,40p,4077b,432s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 43i,8n,40p,2223b,607s stack positions out of 5000i,500n,10000p,200000b,50000s
 {/usr/local/texlive/2012/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/t
 exlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/te
 xlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/tex
@@ -958,10 +907,10 @@ mf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive/2012/texmf
 ist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2012/texmf-dist/fonts/
 type1/urw/times/utmr8a.pfb></usr/local/texlive/2012/texmf-dist/fonts/type1/urw/
 times/utmri8a.pfb>
-Output written on mythesis.pdf (40 pages, 601453 bytes).
+Output written on mythesis.pdf (45 pages, 1074146 bytes).
 PDF statistics:
- 654 PDF objects out of 1000 (max. 8388607)
- 561 compressed objects within 6 object streams
- 208 named destinations out of 1000 (max. 500000)
- 276 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 854 PDF objects out of 1000 (max. 8388607)
+ 742 compressed objects within 8 object streams
+ 265 named destinations out of 1000 (max. 500000)
+ 303 words of extra memory for PDF output out of 10000 (max. 10000000)
 
