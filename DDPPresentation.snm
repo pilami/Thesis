@@ -1,0 +1,19 @@
+\beamer@slide {fig:coc}{2}
+\beamer@slide {fig:rrtextend}{6}
+\beamer@slide {fig:rrt-basic}{7}
+\beamer@slide {fig:rrt-basic}{9}
+\beamer@slide {fig:rrtmdp}{12}
+\beamer@slide {fig:dyna}{13}
+\beamer@slide {algo:DYNA-RRTPI}{14}
+\beamer@slide {algo:Dyna-Episode}{15}
+\beamer@slide {algo:NN-TD}{16}
+\beamer@slide {algo: Modified-Nearest}{17}
+\beamer@slide {algo:Extend}{18}
+\beamer@slide {algo:Simulate RRT sampling trajectories from given rrt and update value function}{19}
+\beamer@slide {algo:Replan-DYNA-RRTPI}{20}
+\beamer@slide {algo:Prune}{21}
+\beamer@slide {algo: Modified-Sample}{22}
+\beamer@slide {puddleworldvalue}{23}
+\beamer@slide {continuouspuddleworld}{24}
+\beamer@slide {dynapuddlemove}{25}
+\beamer@slide {dynapuddlemove}{26}
